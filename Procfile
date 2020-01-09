@@ -1,0 +1,1 @@
+web: gunicorn parkingproject.wsgi --log-file -
