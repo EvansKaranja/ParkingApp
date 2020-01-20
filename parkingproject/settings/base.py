@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
      'rest_framework',
      'parking',
+     'frontend',
 ]
 
 MIDDLEWARE = [
@@ -122,3 +123,7 @@ STATIC_URL = '/static/'
 
 # The absolute path to the directory where collectstatic will collect static files for deployment.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Extra lookup directories for collectstatic to find static files
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)

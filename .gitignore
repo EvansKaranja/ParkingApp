@@ -83,8 +83,9 @@ target/
 *.log
 *.pot
 *.pyc
+pycache
 __pycache__
-
+src
 .env
 db.sqlite3
 development.py
