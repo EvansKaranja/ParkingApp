@@ -6,6 +6,7 @@ from .serializers import MpesaSerializer, MpesaTransaction
 
 
 class PaymentList(CreateAPIView):
+
     queryset = MpesaTransaction.objects.all()
     serializer_class = MpesaSerializer
     permission_classes = [AllowAny]
