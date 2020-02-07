@@ -40,4 +40,5 @@ def lipa_na_mpesa(phone, amount, *args):
     print(response.text)
 
 
-lipa_na_mpesa(phone="254704390798", amount="1")
+lipa_na_mpesa(phone="254728547196", amount="1")
+# lipa_na_mpesa(phone="254704390798", amount="1")
