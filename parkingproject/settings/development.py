@@ -7,7 +7,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'a4c40611.ngrok.io']
+ALLOWED_HOSTS = ['127.0.0.1', 'f88178b6.ngrok.io']
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
