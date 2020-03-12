@@ -28,7 +28,7 @@ from rest_framework.permissions import AllowAny
 @api_view(['GET', 'POST'])
 def hello_world(request):
     if request.method == 'POST':
-        # print(request.data)
+        print(request.data)
         Merchant_request_id = request.data["Body"]["stkCallback"]["MerchantRequestID"]
         print("Merchant_request_id=", Merchant_request_id)
         Checkout_request_id = request.data["Body"]["stkCallback"]["CheckoutRequestID"]
