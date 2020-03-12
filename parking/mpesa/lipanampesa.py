@@ -32,8 +32,8 @@ def lipa_na_mpesa(phone, amount, *args):
         "PartyA": phone,
         "PartyB": keys.business_short_code,
         "PhoneNumber": phone,
-        # "CallBackURL": "https://nairobiparkingsystem.herokuapp.com/callback/",
-        "CallBackURL": "https://4be99e24.ngrok.io/callback/",
+        "CallBackURL": "https://nairobiparkingsystem.herokuapp.com/api/payments/",
+        # "CallBackURL": "https://f909a119.ngrok.io/api/payments/",
         "AccountReference": "Nairobi Parking ",
         "TransactionDesc": "pay parking fee"
     }

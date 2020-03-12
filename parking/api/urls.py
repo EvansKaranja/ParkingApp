@@ -2,5 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('callback/', views.SnippetList.as_view(), name='payments')
+    path('payments/', views.hello_world, name="hello")
 ]
