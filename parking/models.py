@@ -16,7 +16,7 @@ class MpesaPayments(models.Model):
     Amount = models.FloatField()
     MpesaReceiptNumber = models.CharField(max_length=50)
     TransactionDate = models.DateTimeField()
-    PhoneNumber = models.CharField(max_length=15)
+    PhoneNumber = models.CharField(max_length=16)
 
     class Meta:
         verbose_name_plural = 'Lipa na Mpesa Payments'
