@@ -5,10 +5,10 @@ import sys
 
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-                          'parkingproject.settings.development')
     # os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-    #                       'parkingproject.settings.production')
+    #                       'parkingproject.settings.development')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE',
+                          'parkingproject.settings.production')
 
     try:
         from django.core.management import execute_from_command_line

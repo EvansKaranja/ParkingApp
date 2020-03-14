@@ -3,23 +3,23 @@ from django.contrib.gis.db import models
 # Create your models here.
 
 
-# class ParkingSpaces(models.Model):
-#     parking_space_id = models.AutoField(primary_key=True)
-#     parking_type = models.CharField(max_length=100, null=True)
-#     owner = models.CharField(max_length=20, null=True)
-#     streetName = models.CharField(max_length=100, null=True)
-#     active = models.BooleanField(default=False, null=True)
-#     zone = models.CharField(max_length=50, null=True)
-#     lat = models.FloatField(null=True)
-#     lat = models.FloatField(null=True)
+class ParkingSpaces(models.Model):
+    parking_space_id = models.AutoField(primary_key=True)
+    parking_type = models.CharField(max_length=100, null=True)
+    owner = models.CharField(max_length=20, null=True)
+    streetName = models.CharField(max_length=100, null=True)
+    active = models.BooleanField(default=False, null=True)
+    zone = models.CharField(max_length=50, null=True)
+    lat = models.FloatField(null=True)
+    lat = models.FloatField(null=True)
 
-#     centroid = models.PointField(null=True)
+    centroid = models.PointField(null=True)
 
-#     class Meta:
-#         verbose_name_plural = 'Parking Spaces'
+    class Meta:
+        verbose_name_plural = 'Parking Spaces'
 
-#     def __str__(self):
-#         return f"{self.owner}"
+    def __str__(self):
+        return f"{self.owner}"
 
 
 # class ParkingDetails(models.Model):
