@@ -22,4 +22,4 @@ class MpesaPayments(models.Model):
         verbose_name_plural = 'Lipa na Mpesa Payments'
 
     def __str__(self):
-        return f"{self.PhoneNumber} has payed Ksh {self.Amount} receipt number {self.MpesaReceiptNumber}"
+        return f"{self.PhoneNumber} has payed Ksh {self.Amount} receipt number {self.MpesaReceiptNumber} on {self.TransactionDate}"
