@@ -6,7 +6,7 @@ import sys
 
 def main():
     # os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-    #                       'parkingproject.settings.development')
+    #   'parkingproject.settings.development')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                           'parkingproject.settings.production')
 
