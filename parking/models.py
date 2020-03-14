@@ -22,33 +22,33 @@ class ParkingSpaces(models.Model):
         return f"{self.owner}"
 
 
-# class ParkingDetails(models.Model):
-#     parkingSpace = models.ForeignKey(
-#         'ParkingSpaces', on_delete=models.CASCADE, related_name="parkingspace")
-#     duration = models.DurationField()
-#     vehicle_type = models.CharField(max_length=20)
-#     vehicle_registration_number = models.CharField(max_length=10)
-#     time_of_parking = models.DateTimeField(auto_now_add=True)
-#     payments_details = models.ForeignKey(
-#         'MpesaPayments', on_delete=models.CASCADE, related_name="payment")
+class ParkingDetails(models.Model):
+    parkingSpace = models.ForeignKey(
+        'ParkingSpaces', on_delete=models.CASCADE, related_name="parkingspace")
+    duration = models.DurationField()
+    vehicle_type = models.CharField(max_length=20)
+    vehicle_registration_number = models.CharField(max_length=10)
+    time_of_parking = models.DateTimeField(auto_now_add=True)
+    payments_details = models.ForeignKey(
+        'MpesaPayments', on_delete=models.CASCADE, related_name="payment")
 
-#     class Meta:
-#         verbose_name_plural = 'Parking Details'
+    class Meta:
+        verbose_name_plural = 'Parking Details'
 
-#     def __str__(self):
-#         return f"{self.vehicle_registration_number}"
+    def __str__(self):
+        return f"{self.vehicle_registration_number}"
 
 
-# class MpesaPayments(models.Model):
-#     MerchantRequestID = models.CharField(max_length=50)
-#     CheckoutRequestID = models.CharField(max_length=50)
-#     Amount = models.FloatField()
-#     MpesaReceiptNumber = models.CharField(max_length=50)
-#     TransactionDate = models.DateTimeField()
-#     PhoneNumber = models.CharField(max_length=16)
+class MpesaPayments(models.Model):
+    MerchantRequestID = models.CharField(max_length=50)
+    CheckoutRequestID = models.CharField(max_length=50)
+    Amount = models.FloatField()
+    MpesaReceiptNumber = models.CharField(max_length=50)
+    TransactionDate = models.DateTimeField()
+    PhoneNumber = models.CharField(max_length=16)
 
-#     class Meta:
-#         verbose_name_plural = 'Lipa na Mpesa Payments'
+    class Meta:
+        verbose_name_plural = 'Lipa na Mpesa Payments'
 
-#     def __str__(self):
-#         return f"{self.PhoneNumber} has payed Ksh {self.Amount} receipt number {self.MpesaReceiptNumber} on {self.TransactionDate}"
+    def __str__(self):
+        return f"{self.PhoneNumber} has payed Ksh {self.Amount} receipt number {self.MpesaReceiptNumber} on {self.TransactionDate}"
