@@ -2,8 +2,8 @@ from datetime import datetime
 import time
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .serializers import MpesaSerializer
-from parking.models import MpesaPayments
+# from .serializers import MpesaSerializer
+# from parking.models import MpesaPayments
 # from parking.mpesa import lipanampesa
 from rest_framework.permissions import AllowAny
 
@@ -31,7 +31,7 @@ def make_payments(request):
 
 @api_view(['GET', 'POST'])
 def LNMtransact(request):
-    mpesaTransactions = MpesaPayments.objects.all()
+    # mpesaTransactions = MpesaPayments.objects.all()
     print(mpesaTransactions)
     # serializer = MpesaSerializer(mpesaTransactions)
     if request.method == 'POST':
@@ -47,14 +47,14 @@ def LNMtransact(request):
             Transaction_datetime = datetime.strptime(
                 Transaction_date, "%Y%m%d%H%M%S")
             Phone_number = request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
-            transaction = MpesaPayments.objects.create(
-                MerchantRequestID=Merchant_request_id,
-                CheckoutRequestID=Checkout_request_id,
-                Amount=Amount,
-                MpesaReceiptNumber=Mpesa_receipt_number,
-                TransactionDate=Transaction_datetime,
-                PhoneNumber=Phone_number)
-            transaction.save()
+            # transaction = MpesaPayments.objects.create(
+            #     MerchantRequestID = Merchant_request_id,
+            #     CheckoutRequestID = Checkout_request_id,
+            #     Amount = Amount,
+            #     MpesaReceiptNumber = Mpesa_receipt_number,
+            #     TransactionDate = Transaction_datetime,
+            #     PhoneNumber = Phone_number)
+            # transaction.save()
             return Response({"payed": True})
         else:
             print("failed")
