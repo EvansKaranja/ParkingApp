@@ -11,7 +11,7 @@ class ParkingSpaces(models.Model):
     active = models.BooleanField(default=False, null=True)
     zone = models.CharField(max_length=50, null=True)
     lat = models.FloatField(null=True)
-    lat = models.FloatField(null=True)
+    lng = models.FloatField(null=True)
 
     centroid = models.PointField(null=True)
 
