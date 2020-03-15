@@ -5,11 +5,11 @@ from rest_framework.response import Response
 from .serializers import MpesaSerializer
 from parking.models import MpesaPayments
 from parking.mpesa import lipanampesa
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(['GET', 'POST'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def make_payments(request):
     if request.method == 'POST':
         vehicleType = request.data["vehicleType"]
@@ -48,6 +48,7 @@ def LNMtransact(request):
                 Transaction_date, "%Y%m%d%H%M%S")
             Phone_number = request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
             transaction = MpesaPayments.objects.create(
+                owner=request.user,
                 MerchantRequestID=Merchant_request_id,
                 CheckoutRequestID=Checkout_request_id,
                 Amount=Amount,

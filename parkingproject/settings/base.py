@@ -37,10 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'rest_framework',
+    'accounts',
     'parking',
     'frontend',
+    'knox'
 ]
+REST_FRAMEWORK = {
 
+}
+AUTH_USER_MODEL = "accounts.User"
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -131,8 +136,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
+
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
     'DEFAULT_PERMISSION_CLASSES': [
         # 'rest_framework.permissions.IsAuthenticatedOrReadOnly'
         'rest_framework.permissions.AllowAny'

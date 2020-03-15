@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.gis.db import models
+from accounts.models import User
 # Create your models here.
 
 
@@ -23,6 +24,8 @@ class ParkingSpaces(models.Model):
 
 
 class ParkingDetails(models.Model):
+    owner = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="parking")
     parkingSpace = models.ForeignKey(
         'ParkingSpaces', on_delete=models.CASCADE, related_name="parkingspace")
     duration = models.DurationField()
@@ -40,6 +43,8 @@ class ParkingDetails(models.Model):
 
 
 class MpesaPayments(models.Model):
+    owner = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="payment")
     MerchantRequestID = models.CharField(max_length=50)
     CheckoutRequestID = models.CharField(max_length=50)
     Amount = models.FloatField()
@@ -51,4 +56,4 @@ class MpesaPayments(models.Model):
         verbose_name_plural = 'Lipa na Mpesa Payments'
 
     def __str__(self):
-        return f"{self.PhoneNumber} has payed Ksh {self.Amount} receipt number {self.MpesaReceiptNumber} on {self.TransactionDate}"
+        return f"{self.owner}({self.PhoneNumber}) has payed Ksh {self.Amount} receipt number {self.MpesaReceiptNumber} on {self.TransactionDate}"
