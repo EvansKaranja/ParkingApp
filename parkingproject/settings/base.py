@@ -37,15 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'rest_framework',
-    'accounts',
+    'billing',
     'parking',
     'frontend',
-    'knox'
+    'knox',
+    'users'
+
 ]
 REST_FRAMEWORK = {
 
 }
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = "users.User"
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -139,7 +141,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly'
-        'rest_framework.permissions.AllowAny'
+        'rest_framework.permissions.IsAuthenticated'
+        # 'rest_framework.permissions.AllowAny'
     ]
 }

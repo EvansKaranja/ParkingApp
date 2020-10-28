@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from parking.models import MpesaPayments
+from parking.models import ParkingSpaces, ParkingDetails
 
 
-class MpesaSerializer(serializers.ModelSerializer):
+class ParkingInfoSerilizer(serializers.ModelSerializer):
     class Meta:
-        model = MpesaPayments
+        model = ParkingDetails
         fields = "__all__"

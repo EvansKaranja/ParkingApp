@@ -1,8 +1,7 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from .views import ParkingInfo
 
 urlpatterns = [
-    path('payments/', views.LNMtransact, name="payments"),
-    path('parkingdetails/', views.make_payments, name="parkingdetails"),
+    path('parkinginfo/', ParkingInfo.as_view(), name="parkinfo")
 
 ]

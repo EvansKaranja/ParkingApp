@@ -85,8 +85,8 @@ target/
 *.pyc
 pycache
 __pycache__
-src
+# src
 .env
 db.sqlite3
-development.py
+# development.py
 .bashrc

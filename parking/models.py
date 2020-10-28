@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.gis.db import models
-from accounts.models import User
+# from django.contrib.auth.models import User
+from billing.models import MpesaPayments
 # Create your models here.
+from django.conf import settings
 
 
 class ParkingSpaces(models.Model):
@@ -24,36 +25,20 @@ class ParkingSpaces(models.Model):
 
 
 class ParkingDetails(models.Model):
-    owner = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="parking")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,  related_name="parkingInfo")
     parkingSpace = models.ForeignKey(
-        'ParkingSpaces', on_delete=models.CASCADE, related_name="parkingspace")
+        'ParkingSpaces', on_delete=models.CASCADE, blank=True, null=True, related_name="parkingInfo")
+    mpesaTransaction = models.ForeignKey(
+        'billing.MpesaPayments', on_delete=models.CASCADE, blank=True, null=True)
     duration = models.DurationField()
     vehicle_type = models.CharField(max_length=20)
     vehicle_registration_number = models.CharField(max_length=10)
     time_of_parking = models.DateTimeField(auto_now_add=True)
-    payments_details = models.ForeignKey(
-        'MpesaPayments', on_delete=models.CASCADE, related_name="payment")
+    PhoneNumber = models.CharField(max_length=30, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Parking Details'
 
     def __str__(self):
-        return f"{self.vehicle_registration_number}"
-
-
-class MpesaPayments(models.Model):
-    owner = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="payment")
-    MerchantRequestID = models.CharField(max_length=50)
-    CheckoutRequestID = models.CharField(max_length=50)
-    Amount = models.FloatField()
-    MpesaReceiptNumber = models.CharField(max_length=50)
-    TransactionDate = models.DateTimeField()
-    PhoneNumber = models.CharField(max_length=16)
-
-    class Meta:
-        verbose_name_plural = 'Lipa na Mpesa Payments'
-
-    def __str__(self):
-        return f"{self.owner}({self.PhoneNumber}) has payed Ksh {self.Amount} receipt number {self.MpesaReceiptNumber} on {self.TransactionDate}"
+        return f"{self.user} has payed parking for vehicle numberplate {self.vehicle_registration_number} on {self.time_of_parking}"

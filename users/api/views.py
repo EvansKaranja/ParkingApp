@@ -1,40 +1,46 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-# from rest_framework import  permissions
 from knox.models import AuthToken
-from .serializers import RegisterSerializer, User, UserSerializer, LoginSerializer
+from .serializers import UserSerilizer, RegisterSerilizer, LoginSerializer
 
 
 class RegisterUser(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
+    serializer_class = RegisterSerilizer
+    permission_classes = [
+        permissions.AllowAny,
+    ]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+
         return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "user": UserSerilizer(user, context=self.get_serializer_context()).data,
             "token": AuthToken.objects.create(user)[1]})
 
 
 class LoginUser(generics.GenericAPIView):
     serializer_class = LoginSerializer
+    permission_classes = [
+        permissions.AllowAny,
+    ]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
+
         return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "user": UserSerilizer(user, context=self.get_serializer_context()).data,
             "token": AuthToken.objects.create(user)[1]})
 
 
-class RetrieveUser(generics.RetrieveAPIView):
+class UserDetail(generics.RetrieveAPIView):
     permission_classes = [
         permissions.IsAuthenticated,
     ]
-    serializer_class = UserSerializer
+    serializer_class = UserSerilizer
 
     def get_object(self):
-        print(self.request.data)
         return self.request.user
