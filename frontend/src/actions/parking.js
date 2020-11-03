@@ -11,10 +11,11 @@ export const getUserLocation = (parkingType) => (dispatch) => {
       
       let lat = position.coords.latitude
       let lng = position.coords.longitude
+      let payload={location:[lat,lng],parkingType}
       console.log(lat)
       dispatch({
         type: SET_USER_LOCATION,
-        payload: {lat,lng,parkingType},
+        payload: payload,
       });
     })}
 
@@ -128,7 +129,6 @@ export const getPaymentinfo = () => (dispatch, getState) => {
   axios
     .get("/parking/parkinginfo", config)
     .then((res) => {
-      console.log(res.data)
       dispatch({
         type: GET_PAYMENT_INFO,
         payload: res.data,

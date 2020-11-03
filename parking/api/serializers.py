@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from parking.models import ParkingSpaces, ParkingDetails
+from parking.models import OnstreetParkingSpaces, OnstreetParkingDetails
 
 
 class ParkingInfoSerilizer(serializers.ModelSerializer):
     class Meta:
-        model = ParkingDetails
+        model = OnstreetParkingDetails
         fields = "__all__"

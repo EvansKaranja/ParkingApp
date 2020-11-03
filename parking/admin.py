@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import ParkingSpaces, ParkingDetails
+from .models import OnstreetParkingSpaces, OnstreetParkingDetails,OffstreetParkingSpaces, OffstreetParkingDetails
 # Register your models here.
-admin.site.register(ParkingSpaces)
-admin.site.register(ParkingDetails)
+admin.site.register(OnstreetParkingSpaces)
+admin.site.register(OnstreetParkingDetails)
+admin.site.register(OffstreetParkingSpaces)
+admin.site.register(OffstreetParkingDetails)

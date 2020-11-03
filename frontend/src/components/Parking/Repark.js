@@ -14,9 +14,9 @@ class Repark extends Component {
     this.props.clearInfo()
  }
   render() {
-    if (!this.props.paymentInfo) {
-      return <Redirect to="/"/>
-    }
+    // if (!this.props.paymentInfo) {
+    //   return <Redirect to="/"/>
+    // }
       return (
         <div><Header/>
               <div style={{ width: "70vw", margin: "2rem auto",background:"#f4f4f4", height: "350px", padding:"1rem" }}>

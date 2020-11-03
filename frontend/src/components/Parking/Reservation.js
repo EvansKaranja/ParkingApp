@@ -4,6 +4,7 @@ import { getParkingDetails,geocode } from "../../actions/parking";
 import { Redirect } from "react-router-dom";
 import {getAmount,formatmobileNumber} from "../../actions/parking";
 
+
 class Reservation extends Component {
   state = {
       vehicleType: "PRIVATE",
@@ -20,7 +21,7 @@ class Reservation extends Component {
 
 
   getFormStyle = () => {
-    if (this.props.show) {
+    if (this.props.show && this.state.showme) {
       let formStyle = {
         display: "block",
         backgroundColor: "#3b3c36",
@@ -77,17 +78,30 @@ class Reservation extends Component {
       redirect: true,
     });
   };
-
+  handleClick = () => {
+    this.setState({
+      ...this.state,
+      showme:false
+    })
+    this.props.clearJSONlayer()
+    
+    this.setState({
+      ...this.state,
+      showme:true
+    })
+  }
   render() {
     if (this.state.redirect) {
       return <Redirect to="/detail" />;
     
     }
+  
     return (
       <React.Fragment>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div style={this.getFormStyle()}>
-            <div className="mt-2">
+            <div >
+              <div style={{display:"flex",justifyContent: "flex-end"}}><p onClick = {this.handleClick} style={{margin:"0",width:"25px", height:"25px",textAlign:"center" ,borderRadius:"50%",fontWeight:"bolder",cursor: "pointer" ,backgroundColor:"white",color:"red",padding:"auto"}}>X</p></div>
               <form onSubmit={this.handleOnsubmit}>
                 <div className="form-group">
                   <label className="text-white">Select Vehicle Type</label>

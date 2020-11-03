@@ -52,36 +52,53 @@ class Parking extends Component {
 
   }
   
-  // componentDidUpdate() {
-  //   if (this.props.location && this.props.paymentInfo&&!this.props.loading) {
-  //     console.log("location")
-  //     this.addCircle(this.props.location);
-  //     this.addRoute(
-  //       this.props.location,
-  //       this.props.parkingDetails.parkingspace
-  //     );
-  //   }
-  // }
-  // addRoute = (a, b) => {
-  //   L.Routing.control({
-  //     router: L.Routing.mapbox(
-  //       "pk.eyJ1IjoiZXZhbnNrYXJhbmphIiwiYSI6ImNqdm5yNjF6ODFsaWk0OXJ0NzhwcXF1NHYifQ.LlDfnOCws33cmI5NmYh3nA"
-  //     ),
-  //     waypoints: [
-  //       L.latLng(a.latitude, a.longitude),
-  //       L.latLng(b.geometry.coordinates[1], b.geometry.coordinates[0]),
-  //     ],
-  //   }).addTo(this.state.map);
-  // };
-  // addCircle = (x) => {
-  //   var circle = L.circle([x.latitude, x.longitude], {
-  //     color: "red",
-  //     fillColor: "#f03",
-  //     fillOpacity: 0.5,
-  //     radius: x.accuracy,
-  //   });
-  //   circle.addTo(this.state.map);
-  // };
+  componentDidUpdate() {
+
+    if (this.props.paymentInfo&&!this.props.loading) {
+      // this.addCircle(this.props.location);
+    // this.addRoute()
+
+      this.addRoute(
+        this.props.parkingDetails.parkingspace
+      );
+    }
+  }
+  getlocation = ()=>{
+    navigator.geolocation.getCurrentPosition((position) => {
+    let location = null
+      let lat = position.coords.latitude
+      let lng = position.coords.longitude
+      location = [lat,lng]
+
+    })
+    return location
+
+  }
+  addRoute = (b) => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      let lat = position.coords.latitude
+      let lng = position.coords.longitude
+      this.state.map.setView([lat,lng])
+
+      L.Routing.control({
+        router: L.Routing.mapbox(
+          "pk.eyJ1IjoiZXZhbnNrYXJhbmphIiwiYSI6ImNqdm5yNjF6ODFsaWk0OXJ0NzhwcXF1NHYifQ.LlDfnOCws33cmI5NmYh3nA"
+        ),
+        waypoints: [
+          L.latLng(lat,lng),
+          L.latLng(b.geometry.coordinates[1], b.geometry.coordinates[0]),
+        ],}).addTo(this.state.map);
+    })
+  };
+  addCircle = (x) => {
+    var circle = L.circle([x.latitude, x.longitude], {
+      color: "red",
+      fillColor: "#f03",
+      fillOpacity: 0.5,
+      radius: x.accuracy,
+    });
+    circle.addTo(this.state.map);
+  };
   init = (id) => {
     if (this.state.map) return;
     let map = L.map(id, config.params);
@@ -92,6 +109,9 @@ class Parking extends Component {
       config.tileLayer.uri,
       config.tileLayer.params
     ).addTo(map);
+    L.control.zoom({
+      position:'topleft'
+    }).addTo(map)
 
     this.setState({ map, tileLayer });
   };
@@ -106,19 +126,22 @@ class Parking extends Component {
             }}
         >
           <Header />
+          <div style={{display:"flex"}}>
+        <Radial/>
           <div
             ref={this.mapRef}
             id="map"
             style={{
-              height: "90vh",
-              width: "100vw",
-              // padding: "10px",
               borderTop: "2px solid #FFDC01",
+              height: "93vh",
+              width: "100vw",
               position: "relative",
               zIndex: "1",
             }}
         ></div>
-        {this.props.loading?<Spinner/>:<Radial/>}
+        </div>
+        {this.props.loading?<Spinner/>:<br/>}
+
         </div>
       );
       }

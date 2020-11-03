@@ -13,7 +13,7 @@ class ParkingInfo(APIView):
     def get(self, request, format=None):
         time.sleep(25)
         user = self.request.user
-        parking = user.parkingInfo.all().order_by('-id')[0]
+        parking = user.onstreetparkingInfo.all().order_by('-id')[0]
         if parking.mpesaTransaction:
             if parking.time_of_parking.date() == datetime.today().date():
                 serializer = ParkingInfoSerilizer(parking)

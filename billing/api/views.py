@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .serializers import MpesaSerializer
 from billing.models import MpesaPayments
 from billing.mpesa import lipanampesa
-from parking.models import ParkingDetails
+from parking.models import OnstreetParkingDetails
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
@@ -14,7 +14,7 @@ def make_payments(request):
     print(request.user)
     if request.method == 'POST':
         parkingspace = request.data["parkingspace"]
-        ParkingDetails.objects.create(
+        OnstreetParkingDetails.objects.create(
             user=request.user,
             duration=request.data["duration"],
             vehicle_type=request.data["vehicleType"],
@@ -59,7 +59,7 @@ def LNMtransact(request):
                 TransactionDate=Transaction_datetime,
                 PhoneNumber=Phone_number)
             transaction.save()
-            parking = ParkingDetails.objects.filter(
+            parking = OnstreetParkingDetails.objects.filter(
                 PhoneNumber=Phone_number).order_by('-id')[0]
             parking.mpesaTransaction = transaction
             parking.save()

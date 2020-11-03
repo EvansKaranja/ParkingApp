@@ -13,6 +13,7 @@ const initialState = {
   location: null,
   loading: true,
   paymentInfo:null,
+  parkingType:null,
   
 };
 export default function(state = initialState, action) {
@@ -28,13 +29,13 @@ export default function(state = initialState, action) {
         parkingDetails: action.payload
       };
     case SET_USER_LOCATION:
-      console.log("hello")
       return {
         ...state,
-        location: action.payload
+        location:action.payload.location,
+        parkingType:action.payload.parkingType
       };
     case SET_GEOCODED_LOCATION:
-      console.log(action.payload)
+      
       return {
         ...state,
       };

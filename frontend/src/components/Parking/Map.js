@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Reservation from "./Reservation";
-import {geocodeUserLocation,getUserLocation,getParkingSpaces} from "../../actions/parking";
+import {geocodeUserLocation,getUserLocation,getParkingSpaces,clearInfo} from "../../actions/parking";
 import Spinner from "../common/Spinner"
 import {  Redirect} from "react-router-dom";
 
@@ -59,8 +59,8 @@ class Map extends Component {
 
   }
   componentDidUpdate(preProps, PrevState) {
-    if (!this.props.location && !this.props.parkingSpaces) {
-      // this.state.map.setView([this.props.location.lat, this.props.location.lng])
+    if (this.props.location && !this.props.parkingSpaces) {
+      this.state.map.setView([this.props.location[0], this.props.location[0]])
       // this.props.getParkingSpaces(this.props.location.parkingType) 
       this.props.getParkingSpaces()
     }
@@ -78,8 +78,7 @@ class Map extends Component {
       onEachFeature: this.onEachFeature,
       pointToLayer: this.pointToLayer,
     });
-    // this.state.tileLayer.on("load",()=>geojsonLayer.addTo(this.state.map))
-    geojsonLayer.addTo(this.state.map)
+    this.state.tileLayer.on("load",()=>geojsonLayer.addTo(this.state.map))
 
     
     this.setState({ geojsonLayer });
@@ -147,15 +146,12 @@ handleOnsubmit = (e) => {
   
 }
   getlocation = () => {
-    console.log("clicked")
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position)
-    })
-    // const data = {
-    //   offstreet: this.state.offstreet,
-    //   onstreet: this.state.onstreet,
-    //   disabled: this.state.disabled,
-    // }
+    const data = {
+      offstreet: this.state.offstreet,
+      onstreet: this.state.onstreet,
+      disabled: this.state.disabled,
+    }
+    this.props.getUserLocation(data)
 
 this.setState({display: false});
   
@@ -182,29 +178,20 @@ this.setState({display: false});
     }
 
 }
-
-getFormStyle = () => {
-if (this.state.display) {
-  let formStyle = {
-    backgroundColor: "#3b3c36",
-    width: "300px",
-    height: "320px",
-    margin: "5px",
-    position: "absolute",
-    top: "60px",
-    zIndex: "5",
-    padding: "10px",
-    color: "white",
-    borderRadius: "10px",
-  };
-  return formStyle;
-} else {
-  let formStyle = {
-    display: "none",
-  };
-  return formStyle;
+clearJSONlayer=()=>{
+  console.log("called")
+  this.props.clearInfo()
+  this.state.map.removeLayer(this.state.geojsonLayer);
+  location.reload();
+  this.setState({
+    ...this.state,
+    show:false,
+    geojsonLayer:null,
+    display:true,
+    parkingspace:null
+  })
 }
-};
+
   render() {
     if (this.props.paymentInfo) {
       return <Redirect to="/parking" />
@@ -220,18 +207,8 @@ if (this.state.display) {
         >
           <Header />
           <div>
-            <div
-              ref={this.mapRef}
-              id="map"
-              style={{
-                height: "90vh",
-                width: "100vw",
-                position: "relative",
-                zIndex: "1",
-              }}
-            ></div>
-            <React.Fragment>
-              <div style={this.getFormStyle()}>
+            <div style={{display:"flex"}}>
+              <div style={{backgroundColor: "#3b3c36",width: "400px",height: "100vh",top: "60px",zIndex: "5",padding: "20px",color: "white"}}>
                 <div
                   style={{
                     height: "8vh",
@@ -262,6 +239,7 @@ if (this.state.display) {
               </label>
                   <button
                     type="button"
+                    disabled={this.props.parkingSpaces}
                     onClick={this.getlocation}
                     className="btn btn-success btn-block mr-2 mb-2 mt-3 "
                   >
@@ -282,21 +260,41 @@ if (this.state.display) {
                         onChange={this.handleonChange}
                         required
                       />
-                      <button type="submit" className="btn btn-success rounded-0" style={{ width: "100px" }} >Search</button>
+                      <button type="submit" disabled={this.props.parkingSpaces} className="btn btn-success rounded-0" style={{ width: "100px" }} >Search</button>
                     </div>
                   </form>
-           
-         
+                  {this.state.geojsonLayer?
+                  <button
+                    type="button"
+                    disabled={this.props.parkingSpaces}
+                    // onClick={this.clearLayer}
+                    className="btn btn-danger btn-block mr-2 mb-2 mt-8 "
+                  >
+                    Clear  Layer
+              </button>:<span></span>}
                 </div>
               </div>
+              <div
+              ref={this.mapRef}
+              id="map"
+              style={{
+                height: "93vh",
+                width: "100vw",
+                position: "relative",
+                zIndex: "1",
+              }}
+            ></div>
               {/* ......................................... */}
-              <Reservation
+            
+            </div>
+            
+            <Reservation
                 show={this.state.show}
                 parkingspace={this.state.parkingspace}
+                clearJSONlayer = {this.clearJSONlayer}
               />
-            </React.Fragment>
-            {this.props.location && !this.props.parkingSpaces ? <Spinner /> : <br />}
-          
+            {!this.state.display && !this.state.geojsonLayer  ? <Spinner /> : <br />}
+       
           </div>
         </div>
       );
@@ -311,4 +309,4 @@ const mapStateToProps = (state) => ({
   
 });
 
-export default connect(mapStateToProps,{getParkingSpaces,geocodeUserLocation,getUserLocation})(Map);
+export default connect(mapStateToProps,{getParkingSpaces,geocodeUserLocation,getUserLocation,clearInfo})(Map);

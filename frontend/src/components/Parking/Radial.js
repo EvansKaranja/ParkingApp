@@ -1,23 +1,26 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { Link } from "react-router-dom";
 import "react-circular-progressbar/dist/styles.css";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import {clearInfo} from "../../actions/parking"
+
 class Radial extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      percentage_time_remaining: "",
+      percentage_time_remaining: 100,
       time_remaining: "",
       intervalid: "",
       redirect:false,
     };
   }
-  componentDidMount() {
-    var intervalId = setInterval(this.parkingTime, 1000);
+
+componentDidUpdate(prevProps){
+ if(prevProps!==this.props){
+  var intervalId = setInterval(this.parkingTime, 1000);
     this.setState({...this.state,intervalId: intervalId});
+ }
   }
   componentWillUnmount() {
     clearInterval(this.state.intervalId);
@@ -58,7 +61,7 @@ class Radial extends Component {
     return h + ':' + m + ':' + s;
   }
   parkingTime = () => {
-    if (this.props.paymentInfo) {
+    if (this.props.paymentInfo.time_of_parking) {
       let time_of_parking = new Date(this.props.paymentInfo.time_of_parking)
       let currentTime = new Date()
       let duration = this.props.paymentInfo.duration
@@ -82,58 +85,26 @@ class Radial extends Component {
     })
   }
   render() {
-    if (this.state.redirect) {
-      return <Redirect to="/map"/>
-    }
-    if (this.state.percentage_time_remaining > 100 && this.props.paymentInfo.time_of_parking && this.props.paymentInfo.duration) {
-      return <Redirect to="/repark" />
-    }
-    if (!this.props.paymentInfo.time_of_parking && !this.props.paymentInfo.duration && !this.state.redirect) {
-      return (
-        <div style={{height:"100vh",width:"100vw", display:"flex", justifyContent:"center", alignItems:"center",zIndex:5}}>
-        <div
-          style={{
-            minWidth: "90vw",
-            height: "250px",
-            position: "absolute",
-            top: "60px",
-            padding: "10px",
-            borderRadius: "10px",
-              backgroundColor: "rgb(208 47 47)",
-            zIndex:"5"
-            
-            
-          }}
-        >
-          <div
-              style={{
-              height: "250px",
-              minWidth: "600px",
-              margin: "auto",
-                color: "black"
-              
-            }}
-            > <div> <h3 style={{margin:"3.5rem 0 0 0", textAlign:"center"}}>The system was unable to process your payments...</h3></div>
-            <div><h5 style={{margin:"2.5rem 0 0 1rem", textAlign:"center"}}>Kindly, try to <Link  to = "/"  onClick = {this.handleClick}>reserve again</Link>...</h5></div>
-            </div></div></div>
-        
-        
-      );
-    } else {
-      // ..........................................................................................
+    if(!this.props.loading && !this.props.paymentInfo.time_of_parking){
+      return <Redirect to="/fail" />
+
+    }else if (this.state.redirect) {
+        return <Redirect to="/map"/>
+      }else if (this.state.percentage_time_remaining > 100 && this.props.paymentInfo.time_of_parking && this.props.paymentInfo.duration) {
+          return <Redirect to="/repark" />
+        }else{
       return (
         <div>
           <div
             style={{
               backgroundColor: "#3b3c36",
               width: "350px",
-              height: "300px",
-              margin: "5px",
-              position: "absolute",
+              height: "100vh",
+              // margin: "5px",
               top: "60px",
               padding: "10px",
               color: "white",
-              borderRadius: "10px",
+              // borderRadius: "10px",
               zIndex:"5"
             }}
           >
@@ -199,9 +170,47 @@ class Radial extends Component {
      )
       
     }
+
   }
 }
 const mapStateToProps = (state) => ({
-  paymentInfo:state.parking.paymentInfo
+  paymentInfo:state.parking.paymentInfo,
+  loading: state.parking.loading,
+
 });
 export default connect(mapStateToProps,{clearInfo})(Radial);
+
+
+ 
+    // if (!this.props.paymentInfo.time_of_parking && !this.props.paymentInfo.duration && !this.state.redirect) {
+    //   return (
+    //     <div style={{height:"100vh",width:"100vw", display:"flex", justifyContent:"center", alignItems:"center",zIndex:5}}>
+    //     <div
+    //       style={{
+    //         minWidth: "90vw",
+    //         height: "250px",
+    //         position: "absolute",
+    //         top: "60px",
+    //         padding: "10px",
+    //         borderRadius: "10px",
+    //           backgroundColor: "rgb(208 47 47)",
+    //         zIndex:"5"
+            
+            
+    //       }}
+    //     >
+    //       <div
+    //           style={{
+    //           height: "250px",
+    //           minWidth: "600px",
+    //           margin: "auto",
+    //             color: "black"
+              
+    //         }}
+    //         > <div> <h3 style={{margin:"3.5rem 0 0 0", textAlign:"center"}}>The system was unable to process your payments...</h3></div>
+    //         <div><h5 style={{margin:"2.5rem 0 0 1rem", textAlign:"center"}}>Kindly, try to <Link  to = "/"  onClick = {this.handleClick}>reserve again</Link>...</h5></div>
+    //         </div></div></div>
+        
+        
+    //   );
+    // } 
