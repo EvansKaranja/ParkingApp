@@ -21,7 +21,6 @@ this.props.clearInfo()
       seconds,
       mobileNumber,
       amount,
-      parkingspace,
     } = this.props.parkingDetails;
     var data = {
       vehicleType,
@@ -29,7 +28,7 @@ this.props.clearInfo()
       duration :`${hours}:${minutes}:${seconds}`,
       mobileNumber,
       amount,
-      parkingspace,
+      parkingspace:this.props.parkingDetails.parkingspace.id
     };
     const token = this.props.token
     const config = {
@@ -60,6 +59,7 @@ axios
       seconds,
       mobileNumber,
       amount,
+      parkingspace
     } = this.props.parkingDetails;
     if (!this.props.parkingDetails) {
       return <Redirect to="/" />;
@@ -94,7 +94,7 @@ axios
                 <tbody>
                   <tr>
                     <td>Parking Space id</td>
-                    <td>1</td>
+    <td>{parkingspace.id}</td>
                   </tr>
                   <tr>
                     <td>Vehicle Type</td>

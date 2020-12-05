@@ -1,15 +1,18 @@
 from django.contrib.gis.db import models
 # from django.contrib.auth.models import User
 from billing.models import MpesaPayments
+from sensor.models import Sensor
 # Create your models here.
 from django.conf import settings
 
 
 class OnstreetParkingSpaces(models.Model):
-    parking_space_id = models.AutoField(primary_key=True)
+    # parking_space_id = models.AutoField(primary_key=True)
+    sensor_status = models.OneToOneField(Sensor, on_delete=models.CASCADE, related_name="sensor_readings",null=True)
     owner = models.CharField(max_length=20, null=True)
     streetName = models.CharField(max_length=100, null=True)
-    status = models.BooleanField(default=False, null=True)
+    reserved = models.BooleanField(default=False, null=True)
+    disabled = models.BooleanField(default=False, null=True)
     zone = models.CharField(max_length=50, null=True)
     centroid = models.PointField(null=True)
 
@@ -20,10 +23,11 @@ class OnstreetParkingSpaces(models.Model):
         return f"{self.owner}"
 
 class OffstreetParkingSpaces(models.Model):
-    parking_space_id = models.AutoField(primary_key=True)
+    # parking_space_id = models.AutoField(primary_key=True)
     owner = models.CharField(max_length=20, null=True)
     streetName = models.CharField(max_length=100, null=True)
-    status = models.BooleanField(default=False, null=True)
+    reserved = models.BooleanField(default=False, null=True)
+    disabled = models.BooleanField(default=False, null=True)
     zone = models.CharField(max_length=50, null=True)
     count = models.BigIntegerField(null=True)
 

@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "parkingslot",
+"features": [
+{ "type": "Feature", "properties": { "owner": "NCC", "streetName": "Kijabe", "status": true, "zone": "A", "sensor_status_id": 1 }, "geometry": { "type": "Point", "coordinates": [ 36.821708679199219, -1.283147351126288 ] } },
+{ "type": "Feature", "properties": { "owner": "NCC", "streetName": "Moi", "status": false, "zone": "B", "sensor_status_id": null }, "geometry": { "type": "Point", "coordinates": [ 36.823511123657227, -1.284262870034529 ] } },
+{ "type": "Feature", "properties": { "owner": "NCC", "streetName": "Linthuli", "status": false, "zone": "C", "sensor_status_id": null }, "geometry": { "type": "Point", "coordinates": [ 36.82466983795166, -1.286922951619328 ] } }
+]
+}

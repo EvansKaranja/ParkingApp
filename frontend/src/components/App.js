@@ -10,6 +10,7 @@ import Parking from "./Parking/Parking";
 import PrivateRoute from "./common/PrivateRoute";
 import Repark from './Parking/Repark'
 import Fail from './Parking/PaymentFail'
+import Admin from './admin/Parking'
 
 class App extends Component {
   render() {
@@ -24,6 +25,8 @@ class App extends Component {
               <PrivateRoute exact path="/parking" component={Parking} />
               <PrivateRoute exact path="/repark" component={Repark} />
               <PrivateRoute exact path="/Fail" component={Fail} />
+              <PrivateRoute exact path="/admin" component={Admin} />
+
 
 
             </Switch>

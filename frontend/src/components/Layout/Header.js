@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link} from "react-router-dom";
+import { Link, Redirect} from "react-router-dom";
 import {clearInfo} from "../../actions/parking"
 import { signOutUser, getUser } from "../../actions/user";
 class Header extends Component {
   state = {
     displaySigninForm: "none",
     displaySignUpForm: "none",
+    adminstrator:false
   };
   componentDidMount() {
 if(this.props.token)this.props.getUser();
@@ -33,7 +34,16 @@ if(this.props.token)this.props.getUser();
   handleClick = () => {
     this.props.clearInfo()
   }
+  adminstrator = () => {
+    this.setState({
+      ...this.state,
+      adminstrator:true
+    })
+  }
   render() {
+    if(this.state.adminstrator){
+      return <Redirect to="/admin"/>
+    }
     return (
       <div>
         <nav
@@ -59,6 +69,7 @@ if(this.props.token)this.props.getUser();
           >
             {this.props.isAuthenticated ? (
               <ul className="navbar-nav ">
+             
                 <li className="nav-item">
                   <span
                     style={{ cursor: "pointer" }}
@@ -79,6 +90,16 @@ if(this.props.token)this.props.getUser();
                     SignOut
                   </span>
                 </li>
+                {this.props.user.is_staff?
+                <li className="nav-item" style={{border:"2px solid black"}}>
+                  <span
+                    className="nav-link text-white"
+                    style={{ cursor: "pointer" }}
+                    onClick={this.adminstrator}
+                  >
+                    {this.props.user.is_superuser?<span>Admin</span>:<span>Staff</span>}
+                  </span>
+                </li>:<span></span>}
               </ul>
             ) : (
               <ul className="navbar-nav ">

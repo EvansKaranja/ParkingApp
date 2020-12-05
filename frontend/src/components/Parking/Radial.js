@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import "react-circular-progressbar/dist/styles.css";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
-import {clearInfo} from "../../actions/parking"
+import {clearInfo, sendsms} from "../../actions/parking"
 
 class Radial extends Component {
   constructor(props) {
@@ -21,6 +21,7 @@ componentDidUpdate(prevProps){
   var intervalId = setInterval(this.parkingTime, 1000);
     this.setState({...this.state,intervalId: intervalId});
  }
+
   }
   componentWillUnmount() {
     clearInterval(this.state.intervalId);
@@ -70,7 +71,25 @@ componentDidUpdate(prevProps){
       let time_remaining = ((end_of_parking.getTime() - currentTime.getTime()))
       let total_time = (end_of_parking.getTime() - time_of_parking.getTime())
       let percentage_time_remaining = (100 - (Math.floor(time_remaining * 100 / total_time)))
+
+     
       let formattedTime = this.parseMillisecondsIntoReadableTime(time_remaining)
+      if (formattedTime =="00:01:00"){
+        const data={
+          "number":this.props.paymentInfo.PhoneNumber,
+          "message":"Your session is almost over, kindly extend your reservation if wish to!!!"
+        }
+        
+      this.props.sendsms(data)
+
+
+      }
+      if (formattedTime =="00:00:00"){
+        const data={
+          "number":this.props.paymentInfo.PhoneNumber,
+          "message":"Your session is over! You have 5 more minutes to vacate the parking space before your vehicle is impounded"}
+      this.props.sendsms(data)
+    }
       this.setState({
         ...this.state,
         percentage_time_remaining: percentage_time_remaining,
@@ -84,6 +103,27 @@ componentDidUpdate(prevProps){
       redirect:true
     })
   }
+  endOfSession = ()=>{
+  const data= {
+      parkingSpaceID :this.props.paymentInfo.parkingSpace
+    }
+    const token = this.props.token
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
+    if (token) {
+      config.headers["Authorization"] = `TOKEN ${token}`;
+    }
+axios
+    .post("/parking/parking/end/", data,config)
+    .then((res) => {
+      console.log(res);
+    })
+  .catch((error) => console.log(error));
+   
+  }
   render() {
     if(!this.props.loading && !this.props.paymentInfo.time_of_parking){
       return <Redirect to="/fail" />
@@ -91,6 +131,7 @@ componentDidUpdate(prevProps){
     }else if (this.state.redirect) {
         return <Redirect to="/map"/>
       }else if (this.state.percentage_time_remaining > 100 && this.props.paymentInfo.time_of_parking && this.props.paymentInfo.duration) {
+        this.endOfSession()
           return <Redirect to="/repark" />
         }else{
       return (
@@ -176,9 +217,11 @@ componentDidUpdate(prevProps){
 const mapStateToProps = (state) => ({
   paymentInfo:state.parking.paymentInfo,
   loading: state.parking.loading,
+  token:state.user.token
+
 
 });
-export default connect(mapStateToProps,{clearInfo})(Radial);
+export default connect(mapStateToProps,{clearInfo,sendsms})(Radial);
 
 
  

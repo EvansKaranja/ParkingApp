@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .serializers import MpesaSerializer
 from billing.models import MpesaPayments
 from billing.mpesa import lipanampesa
-from parking.models import OnstreetParkingDetails
+from parking.models import OnstreetParkingDetails,OnstreetParkingSpaces
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
@@ -13,8 +13,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 def make_payments(request):
     print(request.user)
     if request.method == 'POST':
-        parkingspace = request.data["parkingspace"]
-        OnstreetParkingDetails.objects.create(
+        ps = OnstreetParkingSpaces.objects.get(id=request.data["parkingspace"])
+        psd = OnstreetParkingDetails.objects.create(
             user=request.user,
             duration=request.data["duration"],
             vehicle_type=request.data["vehicleType"],
@@ -22,6 +22,8 @@ def make_payments(request):
             PhoneNumber=request.data["mobileNumber"],
 
         )
+        psd.parkingSpace = ps
+        psd.save()
         # parkingInfo.save()
         lipanampesa.lipa_na_mpesa(
             request.data["mobileNumber"], request.data["amount"])
@@ -50,19 +52,21 @@ def LNMtransact(request):
             Transaction_datetime = datetime.strptime(
                 Transaction_date, "%Y%m%d%H%M%S")
             Phone_number = request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
-            transaction = MpesaPayments.objects.create(
-                # owner=request.user,
-                MerchantRequestID=Merchant_request_id,
-                CheckoutRequestID=Checkout_request_id,
-                Amount=Amount,
-                MpesaReceiptNumber=Mpesa_receipt_number,
-                TransactionDate=Transaction_datetime,
-                PhoneNumber=Phone_number)
-            transaction.save()
-            parking = OnstreetParkingDetails.objects.filter(
-                PhoneNumber=Phone_number).order_by('-id')[0]
-            parking.mpesaTransaction = transaction
-            parking.save()
+            parking = OnstreetParkingDetails.objects.filter(PhoneNumber=Phone_number).order_by('-id')[0]
+            if parking.mpesaTransaction==None:
+                    transaction = MpesaPayments.objects.create(
+                    MerchantRequestID=Merchant_request_id,
+                    CheckoutRequestID=Checkout_request_id,
+                    Amount=Amount,
+                    MpesaReceiptNumber=Mpesa_receipt_number,
+                    TransactionDate=Transaction_datetime,
+                    PhoneNumber=Phone_number)
+                    transaction.save()
+                    parking.mpesaTransaction = transaction
+                    parking.save()
+                    ps =OnstreetParkingSpaces.objects.get(id = parking.parkingSpace.id)
+                    ps.reserved = True
+                    ps.save()
         return Response({"payed": True})
     else:
         print("failed")

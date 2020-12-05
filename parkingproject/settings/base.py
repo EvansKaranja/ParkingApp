@@ -37,11 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'rest_framework',
+    'rest_framework_gis',
     'billing',
     'parking',
     'frontend',
     'knox',
-    'users'
+    'users',
+    'sensor'
 
 ]
 REST_FRAMEWORK = {

@@ -1,6 +1,6 @@
 import {
   GET_PARKING, GET_PARKING_DETAILS,
-  SET_USER_LOCATION, SET_GEOCODED_LOCATION, GET_PAYMENT_INFO,CLEAR_PARKING_INFO
+  SET_USER_LOCATION, SET_GEOCODED_LOCATION, GET_PAYMENT_INFO,CLEAR_PARKING_INFO, SENDSMS
 } from "./types";
 
 //get userlocation
@@ -56,14 +56,19 @@ export const geocodeUserLocation = (place) => (dispatch,getState) => {
 }
 
 
-//get parkingspaces
-export const getParkingSpaces = () => (dispatch) => {
+export const getParkingSpaces = (data) => (dispatch,getState) => {
+  const token = getState().user.token;
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+    },
+  };
+  if (token) {
+    config.headers["Authorization"] = `TOKEN ${token}`;
+  }
   axios
-    .get(
-      "https://gist.githubusercontent.com/EvansKaranja/c92ecba827860a15389d701731b292b0/raw/3bf3d4ea48a05912dfb08fb3309a75a50c5e7942/parkingspaces.geojson"
-    )
+    .post("/parking/parking/",data,config)
     .then((res) => {
-      console.log(res.data)
       dispatch({
         type: GET_PARKING,
         payload: res.data,
@@ -127,7 +132,7 @@ export const getPaymentinfo = () => (dispatch, getState) => {
     config.headers["Authorization"] = `TOKEN ${token}`;
   }
   axios
-    .get("/parking/parkinginfo", config)
+    .get("/parking/parkinginfo",config)
     .then((res) => {
       dispatch({
         type: GET_PAYMENT_INFO,
@@ -143,4 +148,28 @@ export const clearInfo = () => (dispatch) => {
     type: CLEAR_PARKING_INFO,
   });
 
+};
+
+
+
+
+export const sendsms = (data) => (dispatch,getState) => {
+  const token = getState().user.token;
+  const config = {
+    headers: {
+      "Content-type": "application/json",
+    },
+  };
+  if (token) {
+    config.headers["Authorization"] = `TOKEN ${token}`;
+  }
+  axios
+    .post("/parking/sendsms/",data,config)
+    .then((res) => {
+      console.log("called")
+      dispatch({
+        type: SENDSMS,
+      });
+    })
+    .catch((error) => console.log(error));
 };

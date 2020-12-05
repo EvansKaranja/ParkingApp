@@ -8,5 +8,9 @@ export const SIGN_OUT_USER = "SIGN_OUT_USER";
 export const LOAD_USER = "LOAD_USER";
 export const GET_PAYMENT_INFO = "GET_PAYMENT_INFO"
 export const CLEAR_PARKING_INFO = "CLEAR_PARKING_INFO"
+export const ADMINISTRATION = "ADMINISTRATION"
+export const SENDSMS = "SENDSMS"
+
+
 
 

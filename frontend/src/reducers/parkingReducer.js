@@ -4,7 +4,8 @@ import {
   SET_USER_LOCATION,
   SET_GEOCODED_LOCATION,
   GET_PAYMENT_INFO,
-  CLEAR_PARKING_INFO
+  CLEAR_PARKING_INFO,
+  SENDSMS
 
 } from "../actions/types.js";
 const initialState = {
@@ -58,6 +59,10 @@ export default function(state = initialState, action) {
           loading: true,
           paymentInfo:null
         };
+      case SENDSMS:
+          return {
+              ...state,
+            };
     default:
       return state;
   }

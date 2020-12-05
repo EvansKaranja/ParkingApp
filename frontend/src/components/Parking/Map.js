@@ -45,11 +45,12 @@ class Map extends Component {
       subwayLinesFilter: "*",
       show: false,
       parkingspace: null,
-      onstreet: false,
+      onstreet: true,
       offstreet: false,
       disabled:false,
       location: "",
-      display:true
+      display:true,
+      // selectedOption:e.target.value
     };
     this.mapRef = React.createRef();
     this.init = this.init.bind(this);
@@ -61,8 +62,12 @@ class Map extends Component {
   componentDidUpdate(preProps, PrevState) {
     if (this.props.location && !this.props.parkingSpaces) {
       this.state.map.setView([this.props.location[0], this.props.location[0]])
-      // this.props.getParkingSpaces(this.props.location.parkingType) 
-      this.props.getParkingSpaces()
+      const data = {
+        location:this.props.location,
+        parkingType:this.props.parkingType
+
+      }
+      this.props.getParkingSpaces(data)
     }
     if (
       this.props.parkingSpaces &&
@@ -150,6 +155,7 @@ handleOnsubmit = (e) => {
       offstreet: this.state.offstreet,
       onstreet: this.state.onstreet,
       disabled: this.state.disabled,
+
     }
     this.props.getUserLocation(data)
 
@@ -157,25 +163,16 @@ this.setState({display: false});
   
 };
   handleClick = (e) => {
-    
-    if (e.target.name === "onstreet") {
-      const onstreet = !this.state.onstreet
-      this.setState({
-     onstreet:onstreet
-      })
-    }
-    if (e.target.name === "offstreet") {
-      const offstreet = !this.state.offstreet
-      this.setState({
-     offstreet:offstreet
-      })
-    }
-    if (e.target.name === "disabled") {
-      const disabled = !this.state.disabled
-      this.setState({
-     disabled:disabled
-      })
-    }
+    this.setState({
+      selectedOption: e.target.value
+    });
+    console.log(this.state.selectedOption)
+    // if (e.target.name === "disabled") {
+    //   const disabled = !this.state.disabled
+    //   this.setState({
+    //  disabled:disabled
+    //   })
+    // }
 
 }
 clearJSONlayer=()=>{
@@ -221,17 +218,17 @@ clearJSONlayer=()=>{
                   <div>
            
                     <div className="form-check form-check-inline">
-                      <input className="form-check-input" type="checkbox" onClick={this.handleClick} name="onstreet" />
+                      <input className="form-check-input" type="radio" onChange={this.handleClick} value="onsteet" checked={this.state.selectedOption === "onstreet"}/>
                       <label className="form-check-label" >Onstreet</label>
                     </div>
                     <div className="form-check form-check-inline">
-                      <input className="form-check-input" type="checkbox" name="offstreet" onClick={this.handleClick} />
+                      <input className="form-check-input" type="radio" name="offstreet" value="offstreet" onChange={this.handleClick} checked={this.state.selectedOption === "offstreet"}/>
                       <label className="form-check-label" >Offstreet</label>
                     </div>
-                    <div className="form-check form-check-inline">
+                    {/* <div className="form-check form-check-inline">
                       <input className="form-check-input" type="checkbox" name="disabled" onClick={this.handleClick} />
                       <label className="form-check-label" >disabled</label>
-                    </div>
+                    </div> */}
                   </div>
                   <br/>
                   <label>
@@ -243,10 +240,10 @@ clearJSONlayer=()=>{
                     onClick={this.getlocation}
                     className="btn btn-success btn-block mr-2 mb-2 mt-3 "
                   >
-                    Park within your vicinity
+                    Reserve within your vicinity
               </button>
                   <label>
-                    Park around:
+                    Reserve around:
               </label>
                   <form onSubmit={this.handleOnsubmit}>
                     <div className="form-group" style={{ display: "flex" }}>
@@ -305,7 +302,8 @@ const mapStateToProps = (state) => ({
   user: state.user,
   location: state.parking.location,
   parkingSpaces: state.parking.parkingSpaces,
-  paymentInfo:state.parking.paymentInfo
+  paymentInfo:state.parking.paymentInfo,
+  parkingType: state.parking.parkingType
   
 });
 
