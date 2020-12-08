@@ -5,7 +5,7 @@ import {
   LOAD_USER,
 } from "../actions/types";
 const initialState = {
-  token: localStorage.getItem("token"),
+  token: sessionStorage.getItem("token"),
   isAuthenticated: false,
   isLoading: false,
   user: null,
@@ -13,14 +13,14 @@ const initialState = {
 export default function (state = initialState, action) {
   switch (action.type) {
     case SIGN_IN_USER:
-      localStorage.setItem("token", action.payload.token);
+      sessionStorage.setItem("token", action.payload.token);
       return {
         ...state,
         isAuthenticated: true,
         ...action.payload,
       };
     case SIGN_UP_USER:
-      localStorage.setItem("token", action.payload.token);
+      sessionStorage.setItem("token", action.payload.token);
       return {
         ...state,
         ...action.payload,
@@ -35,7 +35,7 @@ export default function (state = initialState, action) {
       };
 
     case SIGN_OUT_USER:
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       return {
         ...state,
         isAuthenticated: false,

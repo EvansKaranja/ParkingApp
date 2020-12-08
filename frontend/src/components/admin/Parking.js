@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import Reservation from "../Parking/Reservation";
+import Dashboard from "./Dashboard"
 import {adminstration} from "../../actions/admin";
 import Spinner from "../common/Spinner"
 import {  Redirect} from "react-router-dom";
@@ -45,26 +45,25 @@ class Map extends Component {
       subwayLinesFilter: "*",
       show: false,
       parkingspace: null,
-      onstreet: false,
-      offstreet: false,
-      disabled:false,
       location: "",
       display:true,
       intervalid: "",
+      staff:"",
+      displayDashboard:false
 
     };
     this.mapRef = React.createRef();
     this.init = this.init.bind(this);
   }
   componentDidMount() {
-    if (!this.state.map && !this.props.paymentInfo) this.init(this.mapRef.current);
+    if (!this.state.map && !this.props.paymentInfo && !this.state.displayDashboard) this.init(this.mapRef.current);
     // this.props.adminstration()
 
 
   }
   componentDidUpdate(prevProps,prevState){
     if(prevProps!==this.props && window.location.href==="http://127.0.0.1:8000/#/admin"){
-      var intervalId = setInterval(this.props.adminstration, 30000);
+      var intervalId = setInterval(this.getData, 1000);
         this.setState({...this.state,intervalId: intervalId});
      }
        
@@ -74,6 +73,9 @@ class Map extends Component {
     clearInterval(this.state.intervalId);
   }
   
+  getData =()=>{
+console.log("hello")
+  }
   init = (id) => {
         let map = L.map(id,config.params)
         const tileLayer = L.tileLayer(
@@ -85,8 +87,20 @@ class Map extends Component {
           position:'topright'
         }).addTo(map)
   };
+// Form
+handleonChange = (e) => {
+  this.setState({
+    [e.target.name]: e.target.value,
+  });
+};
+// Dashboard
+displayDashboard =()=>{
+  console.log("clicked")
+  console.log(this.state.displayDashboard)
+  this.setState({...this.state,displayDashboard:true})
+  console.log(this.state.displayDashboard)
 
-  
+}
 
   render() {
     if (this.props.paymentInfo) {
@@ -144,10 +158,10 @@ class Map extends Component {
                 <button
                     type="button"
                     disabled={this.props.parkingSpaces}
-                    onClick={this.getlocation}
+                    onClick={this.displayDashboard}
                     className="btn btn-info btn-block mr-2 mb-2 mt-3 "
                   >
-                   View Revenue
+                   View Dashboard 
               </button>
               <button
                     type="button"
@@ -157,25 +171,46 @@ class Map extends Component {
                   >
                    Add staff
               </button>
+              <form onSubmit={this.makeUserStaff}>
+                    <div className="form-group" style={{ display: "flex" }}>
+                  
+                      <input
+                        type="text"
+                        className="form-control rounded-0"
+                        placeholder="staff email"
+                        name="staff"
+                        value={this.state.staff}
+                        onChange={this.handleonChange}
+                        required
+                        autoComplete="off"
+                      />
+                      <button type="submit" disabled={this.props.parkingSpaces} className="btn btn-success rounded-0" style={{ width: "100px" }} >Send</button>
+                      
+                    </div>
+                  </form>
 
               </span>:<span></span>}
                 </div>
               </div>
+              {/* *******************Map Section***************************************** */}
+          {this.state.displayDashboard?<div  style={{
+                height: "93vh",
+                width: "100vw",
+                // position: "relative",
+                // zIndex: "1",
+              }}><Dashboard/></div>:
+
               <div
               ref={this.mapRef}
               id="map"
               style={{
                 height: "93vh",
                 width: "100vw",
-                position: "relative",
-                zIndex: "1",
+                // position: "relative",
+                // zIndex: "1",
               }}
-            ></div>
-              {/* ......................................... */}
-            
+            ></div>}
             </div>
-            {!this.state.display && !this.state.geojsonLayer  ? <Spinner /> : <br />}
-       
           </div>
         </div>
       );

@@ -45,12 +45,10 @@ class Map extends Component {
       subwayLinesFilter: "*",
       show: false,
       parkingspace: null,
-      onstreet: true,
-      offstreet: false,
+      selectedOption:"onstreet",
       disabled:false,
       location: "",
       display:true,
-      // selectedOption:e.target.value
     };
     this.mapRef = React.createRef();
     this.init = this.init.bind(this);
@@ -151,29 +149,28 @@ handleOnsubmit = (e) => {
   
 }
   getlocation = () => {
+
     const data = {
-      offstreet: this.state.offstreet,
-      onstreet: this.state.onstreet,
+      parkingType: this.state.selectedOption,
       disabled: this.state.disabled,
 
     }
+    console.log(data)
     this.props.getUserLocation(data)
 
 this.setState({display: false});
   
 };
   handleClick = (e) => {
-    this.setState({
-      selectedOption: e.target.value
-    });
-    console.log(this.state.selectedOption)
-    // if (e.target.name === "disabled") {
-    //   const disabled = !this.state.disabled
-    //   this.setState({
-    //  disabled:disabled
-    //   })
-    // }
 
+
+  this.setState({...this.state,disabled:!this.state.disabled})
+
+}
+handleOptionChange=(e)=>{
+  this.setState({
+    selectedOption: e.target.value
+  });
 }
 clearJSONlayer=()=>{
   console.log("called")
@@ -213,35 +210,33 @@ clearJSONlayer=()=>{
                     borderRadius: "5px",
                   }}
                 >     <label className="mt-2">
-                    Type of Parking:
+                    <h5>1. <u>Type of Parking:</u></h5>
+
               </label>
-                  <div>
-           
-                    <div className="form-check form-check-inline">
-                      <input className="form-check-input" type="radio" onChange={this.handleClick} value="onsteet" checked={this.state.selectedOption === "onstreet"}/>
-                      <label className="form-check-label" >Onstreet</label>
-                    </div>
-                    <div className="form-check form-check-inline">
-                      <input className="form-check-input" type="radio" name="offstreet" value="offstreet" onChange={this.handleClick} checked={this.state.selectedOption === "offstreet"}/>
-                      <label className="form-check-label" >Offstreet</label>
-                    </div>
-                    {/* <div className="form-check form-check-inline">
-                      <input className="form-check-input" type="checkbox" name="disabled" onClick={this.handleClick} />
-                      <label className="form-check-label" >disabled</label>
-                    </div> */}
-                  </div>
+              <div>
+              <div className="form-check-inline">
+              <label className="form-check-label">
+              <input type="radio" className="form-check-input" name="onstreet" value="onstreet" onChange={this.handleOptionChange} checked={this.state.selectedOption==="onstreet"}/>Onstreet   </label>
+              </div>
+              <div className="form-check-inline">
+              <label className="form-check-label">
+              <input type="radio" className="form-check-input" name="offstreet" value="offstreet" onChange={this.handleOptionChange} checked={this.state.selectedOption==="offstreet"}/>Offstreet
+              </label>
+              </div>
+              </div>
                   <br/>
                   <label>
-                    Choose Destination to park:
+                    <h5>2. <u>Choose Destination to park:</u></h5>
               </label>
                   <button
                     type="button"
                     disabled={this.props.parkingSpaces}
                     onClick={this.getlocation}
-                    className="btn btn-success btn-block mr-2 mb-2 mt-3 "
+                    className="btn btn-success btn-block mr-2 mb-2 mt-2"
                   >
                     Reserve within your vicinity
               </button>
+            <div style={{textAlign:"center", color:"yellow", fontSize:"20px"}}><label>OR</label></div>
                   <label>
                     Reserve around:
               </label>
@@ -251,15 +246,18 @@ clearJSONlayer=()=>{
                       <input
                         type="text"
                         className="form-control rounded-0"
-                        placeholder="building, street, ..."
+                        placeholder="e.g. Nation Center"
                         name="location"
                         value={this.state.location}
                         onChange={this.handleonChange}
                         required
+                        autoComplete="off"
                       />
                       <button type="submit" disabled={this.props.parkingSpaces} className="btn btn-success rounded-0" style={{ width: "100px" }} >Search</button>
+                      
                     </div>
                   </form>
+                
                   {this.state.geojsonLayer?
                   <button
                     type="button"
@@ -268,7 +266,13 @@ clearJSONlayer=()=>{
                     className="btn btn-danger btn-block mr-2 mb-2 mt-8 "
                   >
                     Clear  Layer
-              </button>:<span></span>}
+              </button>:<span>  <label style={{color:"Red", fontStyle:"italic"}}>
+                    Only for Persons with Disabilities
+              </label>
+                    <div className="form-check form-check-inline">
+                      <input className="form-check-input" type="checkbox" name="disabled" onClick={this.handleClick} />
+                      <label className="form-check-label" >Disabled Parking </label>
+                    </div></span>}
                 </div>
               </div>
               <div

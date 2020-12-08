@@ -135,6 +135,8 @@ class Reservation extends Component {
                     value={this.state.vehicleReg}
                     onChange={this.handleonChange}
                     required
+                    autoComplete="off"
+
                   />
                 </div>
                 <div className="form-group">
@@ -187,6 +189,8 @@ class Reservation extends Component {
                     value={this.state.mobileNumber}
                     onChange={this.handleonChange}
                     required
+                    autoComplete="off"
+
                   />
                 </div>
 

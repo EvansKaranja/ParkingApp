@@ -2,6 +2,7 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
 from .serializers import ParkingInfoSerilizer, ParkingSlotSerilizer, OnstreetParkingSpaces
+from parking.models import OffstreetParkingSpaces
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import time
@@ -14,12 +15,14 @@ from parking.sms import sms
 def parkingSlots(request):
     if request.method == 'POST':
         # print(request.data['parkingType']['onstreet'])
-        if request.data['parkingType']['onstreet']:
+        if request.data['parkingType']['parkingType']=="onstreet":
+            print(request.data['parkingType']['parkingType'])
             parkingSlots = OnstreetParkingSpaces.objects.all().filter(sensor_status__detected =False).filter(reserved=False).filter(disabled=request.data['parkingType']['disabled'])
             serializer = ParkingSlotSerilizer(parkingSlots, many =True) 
             return Response(serializer.data)
         else:
-            parkingSlots = OnstreetParkingSpaces.objects.all()
+            print("running")
+            parkingSlots = OffstreetParkingSpaces.objects.all()
             serializer = ParkingSlotSerilizer(parkingSlots, many =True) 
             return Response(serializer.data)
        
@@ -35,6 +38,8 @@ class ParkingInfo(APIView):
             if parking.mpesaTransaction:
                 if parking.time_of_parking.date() == datetime.today().date():
                     serializer = ParkingInfoSerilizer(parking)
+                    sms.send_sms(f"You have succefully reserved {parking.vehicle_registration_number} for {parking.duration}","+"+parking.PhoneNumber)
+
                     return Response(serializer.data)
                 else:
                     return Response({
@@ -77,7 +82,7 @@ def administration(request):
 @api_view(['POST'])
 def send_sms(request):
     if request.method == 'POST':
-        # sms.send_sms(request.data["message"],"+"+request.data["number"])
+        sms.send_sms(request.data["message"],"+"+request.data["number"])
         return Response(
          {
             "sms":"sms",

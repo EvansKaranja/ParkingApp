@@ -117,7 +117,8 @@ handleRegisterFormSubmittion = (e) => {
                         id="email"
                         className="form-control"
                 onChange={this.handleOnchange}
-                required
+                required 
+                autoComplete="off"
               />
               <label>
                 <b>Password</b>
@@ -130,7 +131,8 @@ handleRegisterFormSubmittion = (e) => {
                 value={this.state.password}
                 onChange={this.handleOnchange}
                 className="form-control"
-                required
+                required 
+                autoComplete="off"
               />
 
               <button type="submit"  className="btn btn-block"
@@ -154,7 +156,8 @@ handleRegisterFormSubmittion = (e) => {
                 value={this.state.email}
                 className="form-control"
                 onChange={this.handleOnchange}
-                required/>
+                required 
+                autoComplete="off"/>
                       <label>
                 <b>First Name</b>
               </label>
@@ -166,7 +169,8 @@ handleRegisterFormSubmittion = (e) => {
                 value={this.state.firstName}
                 className="form-control"
                 onChange={this.handleOnchange}
-                required
+                required 
+                autoComplete="off"
                       />
                       <label>
                 <b>Last Name</b>
@@ -180,7 +184,8 @@ handleRegisterFormSubmittion = (e) => {
                 id="email"
                 className="form-control"
                 onChange={this.handleOnchange}
-                required
+                required 
+                autoComplete="off"
               />
               <label>
                 <b>Password</b>
@@ -193,7 +198,8 @@ handleRegisterFormSubmittion = (e) => {
                 value={this.state.password}
                 onChange={this.handleOnchange}
                 className="form-control"
-                required
+                required 
+                autoComplete="off"
                       />
                       <label>
                 <b>Repeat password</b>
@@ -206,7 +212,8 @@ handleRegisterFormSubmittion = (e) => {
                 value={this.state.confirmPassword}
                 onChange={this.handleOnchange}
                 className="form-control"
-                required
+                required 
+                autoComplete="off"
               />
 
               <button type="submit"  className="btn btn-block"
