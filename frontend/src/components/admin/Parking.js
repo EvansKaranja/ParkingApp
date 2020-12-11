@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Dashboard from "./Dashboard"
-import {adminstration} from "../../actions/admin";
+import {adminstration,makeUserStaff} from "../../actions/admin";
 import Spinner from "../common/Spinner"
 import {  Redirect} from "react-router-dom";
 
@@ -20,6 +20,8 @@ config.params = {
   legends: true,
   infoControl: false,
   attributionControl: true,
+  active:false,
+  illigal:false
 };
 config.tileLayer = {
   uri: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -38,44 +40,58 @@ class Map extends Component {
     this.state = {
       map: null,
       tileLayer: null,
-      numberEntrances: null,
-      location:"",
       geojson: null,
       geojsonLayer: null,
-      subwayLinesFilter: "*",
-      show: false,
-      parkingspace: null,
-      location: "",
-      display:true,
       intervalid: "",
-      staff:"",
-      displayDashboard:false
+      email:"",
+      displayDashboard:false,
+      active:false,
+      illegal:false,
 
     };
     this.mapRef = React.createRef();
     this.init = this.init.bind(this);
   }
   componentDidMount() {
-    if (!this.state.map && !this.props.paymentInfo && !this.state.displayDashboard) this.init(this.mapRef.current);
-    // this.props.adminstration()
+    console.log("mounting")
+    if (!this.state.map && !this.props.paymentInfo) this.init(this.mapRef.current);
+
 
 
   }
   componentDidUpdate(prevProps,prevState){
-    if(prevProps!==this.props && window.location.href==="http://127.0.0.1:8000/#/admin"){
-      var intervalId = setInterval(this.getData, 1000);
-        this.setState({...this.state,intervalId: intervalId});
-     }
-       
+    console.log("updating")
+     if (
+      this.props.active &&
+      this.state.map && !this.state.geojsonLayer
+    ) {
+    this.addGeoJSONLayer(this.props.illegal)
 
+     if(this.state.active)this.addGeoJSONLayer(this.props.active);
+
+    } 
+    console.log(this.props.illegal)
   }
+  
   componentWillUnmount() {
     clearInterval(this.state.intervalId);
   }
   
-  getData =()=>{
-console.log("hello")
+  
+  getData =(e)=>{
+    // if(this.state.geojsonLayer){
+    //   this.state.map.removeLayer(this.state.geojsonLayer)
+    //   this.setState({...this.state, geojsonLayer:null})
+    // }
+    if(e.target.name=="active")this.props.adminstration({"query":"active"})
+      
+    if(e.target.name=="illegal")this.props.adminstration({"query":"illegal"})
+
+
   }
+  /*_________Map Methods___________________*/
+
+  // Initialize map Elemenent
   init = (id) => {
         let map = L.map(id,config.params)
         const tileLayer = L.tileLayer(
@@ -87,18 +103,34 @@ console.log("hello")
           position:'topright'
         }).addTo(map)
   };
+// Add geojson layer
+addGeoJSONLayer =(geojson)=> {
+console.log("Adding data")
+   const geojsonLayer = L.geoJson(geojson).addTo(this.state.map)
+  this.setState({ ...this.state,geojsonLayer });}
+
+  // this.zoomToFeature(geojsonLayer);
+
+/* _______Form_____*/
 // Form
 handleonChange = (e) => {
   this.setState({
     [e.target.name]: e.target.value,
   });
 };
+makeUserStaff=(e)=>{
+  e.preventDefault();
+  this.props.makeUserStaff({"email":this.state.email})
+  this.setState({
+    ...this.state,email:""
+  })
+
+}
 // Dashboard
 displayDashboard =()=>{
-  console.log("clicked")
-  console.log(this.state.displayDashboard)
-  this.setState({...this.state,displayDashboard:true})
-  console.log(this.state.displayDashboard)
+  this.setState({
+    ...this.state,displayDashboard:!this.state.displayDashboard
+  })
 
 }
 
@@ -113,16 +145,18 @@ displayDashboard =()=>{
             height: "100vh",
             width: "100vw",
             overflow: "hidden",
+
           }}
         >
           <Header />
           <div>
             <div style={{display:"flex"}}>
-              <div style={{backgroundColor: "#3b3c36",width: "400px",height: "100vh",top: "60px",zIndex: "5",padding: "20px",color: "white"}}>
+  
+              <div style={{backgroundColor: "#3b3c36",width: "400px",height: "100vh",top: "60px",zIndex: "5",padding: "0 20px",color: "white"}}>
                 <div
                   style={{
                     height: "8vh",
-                    paddingTop: "5px",
+                    // paddingTop: "5px",
                     borderRadius: "5px",
                   }}
                 >   
@@ -131,9 +165,9 @@ displayDashboard =()=>{
                   
                   <button
                     type="button"
-                    disabled={this.props.parkingSpaces}
-                    onClick={this.getlocation}
-                    className="btn btn-primary btn-block mr-2 mb-2 mt-3 "
+                    onClick={this.getData}
+                    className="btn btn-primary btn-block mr-2 mb-8 mt-3 "
+                    name="active"
                   >
                    Active Parking {this.props.active?<span style={{padding:"3px",color:"black",borderRadius:"100px", backgroundColor:"white"}}>{this.props.active["features"].length}</span>:<span></span>}
               </button>
@@ -147,11 +181,11 @@ displayDashboard =()=>{
               </button>
               <button
                     type="button"
-                    disabled={this.props.parkingSpaces}
-                    onClick={this.getlocation}
+                    onClick={this.getData}
+                    name="illegal"
                     className="btn btn-danger btn-block mr-2 mb-2 mt-3 "
                   >
-                   Illegal Session {this.props.illigal?<span style={{padding:"3px",color:"black",borderRadius:"100px", backgroundColor:"white"}}>{this.props.illigal["features"].length}</span>:<span></span>}
+                   Illegal Session {this.props.illegal?<span style={{padding:"3px",color:"black",borderRadius:"100px", backgroundColor:"white"}}>{this.props.illegal["features"].length}</span>:<span></span>}
               </button>
               {this.props.user.is_superuser?<span>
 
@@ -175,11 +209,11 @@ displayDashboard =()=>{
                     <div className="form-group" style={{ display: "flex" }}>
                   
                       <input
-                        type="text"
+                        type="email"
                         className="form-control rounded-0"
                         placeholder="staff email"
-                        name="staff"
-                        value={this.state.staff}
+                        name="email"
+                        value={this.state.email}
                         onChange={this.handleonChange}
                         required
                         autoComplete="off"
@@ -193,23 +227,29 @@ displayDashboard =()=>{
                 </div>
               </div>
               {/* *******************Map Section***************************************** */}
-          {this.state.displayDashboard?<div  style={{
-                height: "93vh",
+              <div style={{
+                height: "100%",
                 width: "100vw",
-                // position: "relative",
-                // zIndex: "1",
-              }}><Dashboard/></div>:
+                position: "relative",
+                overflow:"hidden",
+                backgroundColor:"#3b3c36"
 
-              <div
+                // zIndex: "1",
+              }}> 
+              
+                <div
               ref={this.mapRef}
               id="map"
               style={{
-                height: "93vh",
-                width: "100vw",
-                // position: "relative",
-                // zIndex: "1",
+                height: "92vh",
+                width: "100%",
+                zIndex: "1",
               }}
-            ></div>}
+            ></div>
+            {this.state.displayDashboard?
+           <div style={{position:"absolute", height:"100%",width:"100%",overflow:"hidden",zIndex:"5",top:"0px",left:"0"}}><Dashboard/></div>:<span></span>}
+            </div>
+             
             </div>
           </div>
         </div>
@@ -223,9 +263,9 @@ const mapStateToProps = (state) => ({
   parkingSpaces: state.parking.parkingSpaces,
   paymentInfo:state.parking.paymentInfo,
   active:state.admin.activeCases,
-  illigal:state.admin.illegalCases,
+  illegal:state.admin.illegalCases,
 
   
 });
 
-export default connect(mapStateToProps,{adminstration})(Map);
+export default connect(mapStateToProps,{adminstration,makeUserStaff})(Map);

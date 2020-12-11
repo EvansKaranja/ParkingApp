@@ -189,7 +189,7 @@ class Reservation extends Component {
                     value={this.state.mobileNumber}
                     onChange={this.handleonChange}
                     required
-                    autoComplete="off"
+                    // autoComplete="off"
 
                   />
                 </div>

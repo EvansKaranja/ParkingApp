@@ -38,10 +38,9 @@ def get_decoded_password(*args):
 
 
 def lipa_na_mpesa(phone, amount, *args):
-    print("processing payments")
     access_token = get_access_token()
     api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-    headers = {"Authorization": "Bearer %s" % access_token}
+    headers = {"Authorization": "Bearer %s" % access_token,"Content-Type": "application/json"}
     request = {
         "BusinessShortCode": business_short_code,
         "Password": get_decoded_password(),
@@ -52,9 +51,9 @@ def lipa_na_mpesa(phone, amount, *args):
         "PartyB": business_short_code,
         "PhoneNumber": phone,
         # "CallBackURL": "https://nairobiparkingsystem.herokuapp.com/api/payments/",
-        "CallBackURL": "https://7d8609112f34.ngrok.io/api/payments/",
+        "CallBackURL": "https://06df29da54c4.ngrok.io/api/payments/",
         "AccountReference": "Nairobi Parking ",
-        "TransactionDesc": "pay parking fee"
+        "TransactionDesc": "Pay parking fee"
     }
     response = requests.post(api_url, json=request, headers=headers)
     # print(response.text)
@@ -63,13 +62,4 @@ def lipa_na_mpesa(phone, amount, *args):
     return res
 
 
-# lipa_na_mpesa(phone="254740420848", amount="1")2fc10f4f4a92
-
-# get_access_token()
-# lipa_na_mpesa(phone="254704390798", amount="1")
-
-{'Body': {'stkCallback': {'MerchantRequestID': '28276-153587090-1', 'CheckoutRequestID': 'ws_CO_141020201523571706', 'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.', 'CallbackMetadata': {'Item':
-                                                                                                                                                                                                                           [{'Name': 'Amount', 'Value': 1.0},
-                                                                                                                                                                                                                            {'Name': 'MpesaReceiptNumber', 'Value': 'OJE3HN0PKD'},
-                                                                                                                                                                                                                               {'Name': 'TransactionDate', 'Value': 20201014152428},
-                                                                                                                                                                                                                               {'Name': 'PhoneNumber', 'Value': 254728547196}]}}}}
+# lipa_na_mpesa(phone="254115218023", amount="1")

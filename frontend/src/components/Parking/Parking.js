@@ -106,8 +106,13 @@ class Parking extends Component {
     // L.control.scale({ position: "bottomleft" }).addTo(map);
 
     const tileLayer = L.tileLayer(
-      config.tileLayer.uri,
-      config.tileLayer.params
+      'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1IjoiZXZhbnNrYXJhbmphIiwiYSI6ImNqdm5yNjF6ODFsaWk0OXJ0NzhwcXF1NHYifQ.LlDfnOCws33cmI5NmYh3nA'}
     ).addTo(map);
     L.control.zoom({
       position:'topleft'

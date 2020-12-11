@@ -8,6 +8,8 @@ urlpatterns = [
     path('parking/',views.parkingSlots, name="parkingslots"),
     path('parking/end/',views.endofsession, name="endofsession"),
     path('parking/administration/',views.administration, name="administration"),
+    path('parking/usertostaff/',views.make_user_staff, name="staff"),
+
 
 
 

@@ -1,0 +1,25 @@
+#dashboard {
+    height:100%;
+    width:100%;
+}
+#item{
+    display: flex;
+    height: 50%;
+    width: 100%;
+
+}
+#item1{
+    height: 100%;
+    width: 50%;
+    
+}
+#item2{
+    height: 100%;
+    width: 50%;
+    background: rgb(39, 182, 58);
+}
+#item3{
+    height: 50%;
+    width: 100%;
+    background: rgb(39, 182, 175);
+}

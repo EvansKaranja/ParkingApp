@@ -21,16 +21,7 @@ config.params = {
   infoControl: false,
   attributionControl: true,
 };
-config.tileLayer = {
-  uri: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  params: {
-    minZoom: 1,
-    attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-    id: "",
-    accessToken: "",
-  },
-};
+
 
 class Map extends Component {
   constructor(props) {
@@ -75,6 +66,26 @@ class Map extends Component {
       this.addGeoJSONLayer(this.props.parkingSpaces);
     } 
   }
+  /*----Map Segmetn-----*/
+
+  // Initialize Map
+  init = (id) => {
+    let map = L.map(id,config.params)
+    const tileLayer = L.tileLayer(
+      'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1IjoiZXZhbnNrYXJhbmphIiwiYSI6ImNqdm5yNjF6ODFsaWk0OXJ0NzhwcXF1NHYifQ.LlDfnOCws33cmI5NmYh3nA'}
+    ).addTo(map);
+    this.setState({ map, tileLayer });
+    L.control.zoom({
+      position:'topright'
+    }).addTo(map)
+};
+
   // adding json layer
   addGeoJSONLayer =(geojson)=> {
     const geojsonLayer = L.geoJson(geojson, {
@@ -87,7 +98,18 @@ class Map extends Component {
     this.setState({ geojsonLayer });
 
     this.zoomToFeature(geojsonLayer);
+    var userlocation = L.icon({
+      iconUrl: "/static/frontend/images/user-location.png",
+      iconSize: [50, 60], // size of the icon
+      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+    });
+    if(this.props.location)L.marker(this.props.location, { icon: userlocation })
+ 
+
   }
+
+  // Zoom feature
   zoomToFeature =(target)=> {
     var fitBoundsParams = {
       paddingTopLeft: [10, 10],
@@ -95,6 +117,7 @@ class Map extends Component {
     };
     this.state.map.fitBounds(target.getBounds(), fitBoundsParams);
   }
+
   onEachFeature=(feature, layer) =>{
     if (feature) {
       layer.on({
@@ -104,33 +127,39 @@ class Map extends Component {
       });
     }
   }
+
   highlightFeature = (e) => {
     this.setState({ show: true, parkingspace: e.target.feature });
   }
+  
   pointToLayer=(feature, latlng) =>{
     var greenIcon = L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.6.0/dist/images/marker-icon.png",
-
-      iconSize: [25, 41], // size of the icon
+      iconUrl: "/static/frontend/images/parking2.png",
+color:"red",
+      iconSize: [40, 60], // size of the icon
       iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
       popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
     });
  
     return L.marker(latlng, { icon: greenIcon });
   }
+
   
-  init = (id) => {
-        let map = L.map(id,config.params)
-        const tileLayer = L.tileLayer(
-          config.tileLayer.uri,
-          config.tileLayer.params
-        ).addTo(map);
-        this.setState({ map, tileLayer });
-        L.control.zoom({
-          position:'topright'
-        }).addTo(map)
-  };
-  // ------------------------------
+  clearJSONlayer=()=>{
+    console.log("called")
+    this.props.clearInfo()
+    this.state.map.removeLayer(this.state.geojsonLayer);
+    location.reload();
+    this.setState({
+      ...this.state,
+      show:false,
+      geojsonLayer:null,
+      display:true,
+      parkingspace:null
+    })
+  }
+
+  /*----------------------------------form-----------------------------------------------------------*/
 handleonChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
@@ -172,19 +201,7 @@ handleOptionChange=(e)=>{
     selectedOption: e.target.value
   });
 }
-clearJSONlayer=()=>{
-  console.log("called")
-  this.props.clearInfo()
-  this.state.map.removeLayer(this.state.geojsonLayer);
-  location.reload();
-  this.setState({
-    ...this.state,
-    show:false,
-    geojsonLayer:null,
-    display:true,
-    parkingspace:null
-  })
-}
+
 
   render() {
     if (this.props.paymentInfo) {

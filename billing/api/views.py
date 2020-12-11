@@ -1,4 +1,5 @@
 from datetime import datetime
+import pytz
 import time
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -49,8 +50,10 @@ def LNMtransact(request):
             Mpesa_receipt_number = request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
             Transaction_date = str(
                 request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][3]["Value"])
+            print(Transaction_date)
             Transaction_datetime = datetime.strptime(
                 Transaction_date, "%Y%m%d%H%M%S")
+            print(Transaction_datetime)
             Phone_number = request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
             parking = OnstreetParkingDetails.objects.filter(PhoneNumber=Phone_number).order_by('-id')[0]
             if parking.mpesaTransaction==None:

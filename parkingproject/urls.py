@@ -8,6 +8,5 @@ urlpatterns = [
     path('api/', include('billing.api.urls')),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-
-
 ]
+admin.site.site_header = 'ParkFiti ADMINISTRATOR'
