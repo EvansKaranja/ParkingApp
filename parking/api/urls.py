@@ -9,9 +9,5 @@ urlpatterns = [
     path('parking/end/',views.endofsession, name="endofsession"),
     path('parking/administration/',views.administration, name="administration"),
     path('parking/usertostaff/',views.make_user_staff, name="staff"),
-
-
-
-
-
+    path('dashboard/',views.dashboard_data, name="dashboard"),
 ]

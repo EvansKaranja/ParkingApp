@@ -20,8 +20,6 @@ config.params = {
   legends: true,
   infoControl: false,
   attributionControl: true,
-  active:false,
-  illigal:false
 };
 config.tileLayer = {
   uri: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -40,7 +38,8 @@ class Map extends Component {
     this.state = {
       map: null,
       tileLayer: null,
-      geojson: null,
+      activegeojson: null,
+      illegalgeojson:null,
       geojsonLayer: null,
       intervalid: "",
       email:"",
@@ -53,24 +52,28 @@ class Map extends Component {
     this.init = this.init.bind(this);
   }
   componentDidMount() {
-    console.log("mounting")
     if (!this.state.map && !this.props.paymentInfo) this.init(this.mapRef.current);
 
 
 
   }
   componentDidUpdate(prevProps,prevState){
-    console.log("updating")
+    
      if (
       this.props.active &&
-      this.state.map && !this.state.geojsonLayer
+      this.state.map && prevProps !=this.props
     ) {
-    this.addGeoJSONLayer(this.props.illegal)
-
-     if(this.state.active)this.addGeoJSONLayer(this.props.active);
+      
+      this.addGeoJSONLayer(this.props.active)
 
     } 
-    console.log(this.props.illegal)
+    if (
+      this.props.illegal &&
+      this.state.map && prevProps !=this.props
+    ) {
+      this.addGeoJSONLayer(this.props.illegal)
+
+    } 
   }
   
   componentWillUnmount() {
@@ -79,13 +82,19 @@ class Map extends Component {
   
   
   getData =(e)=>{
-    // if(this.state.geojsonLayer){
-    //   this.state.map.removeLayer(this.state.geojsonLayer)
-    //   this.setState({...this.state, geojsonLayer:null})
-    // }
-    if(e.target.name=="active")this.props.adminstration({"query":"active"})
+
+    if(e.target.name=="active"){
+      this.props.adminstration({"query":"active"})
+      this.setState({...this.state,active:true,illegal:false,displayDashboard:false})
+    
+    }
       
-    if(e.target.name=="illegal")this.props.adminstration({"query":"illegal"})
+    if(e.target.name=="illegal"){
+      this.props.adminstration({"query":"illegal"})
+      this.setState({...this.state,illegal:true,active:false,displayDashboard:false})
+
+    }
+ 
 
 
   }
@@ -105,9 +114,42 @@ class Map extends Component {
   };
 // Add geojson layer
 addGeoJSONLayer =(geojson)=> {
-console.log("Adding data")
-   const geojsonLayer = L.geoJson(geojson).addTo(this.state.map)
+  if(this.state.active){
+    if(this.state.geojsonLayer)this.state.map.removeLayer(this.state.geojsonLayer)
+   const geojsonLayer = L.geoJson(geojson,{pointToLayer: this.pointToLayer,}).addTo(this.state.map)
   this.setState({ ...this.state,geojsonLayer });}
+
+  if(this.state.illegal){
+    if(this.state.geojsonLayer)this.state.map.removeLayer(this.state.geojsonLayer)
+    const geojsonLayer = L.geoJson(geojson,{pointToLayer: this.illigalPointToLayer,}).addTo(this.state.map)
+   this.setState({ ...this.state,geojsonLayer });}
+}
+
+
+  // Marker
+  pointToLayer=(feature, latlng) =>{
+    var greenIcon = L.icon({
+      iconUrl: "/static/frontend/images/test.png",
+color:"red",
+      iconSize: [50, 60], // size of the icon
+      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+    });
+ 
+    return L.marker(latlng, { icon: greenIcon });
+  }
+    // Marker
+    illigalPointToLayer=(feature, latlng) =>{
+      var greenIcon = L.icon({
+        iconUrl: "/static/frontend/images/redparking.png",
+  color:"red",
+        iconSize: [50, 60], // size of the icon
+        iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+        popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+      });
+   
+      return L.marker(latlng, { icon: greenIcon });
+    }
 
   // this.zoomToFeature(geojsonLayer);
 
@@ -228,12 +270,12 @@ displayDashboard =()=>{
               </div>
               {/* *******************Map Section***************************************** */}
               <div style={{
-                height: "100%",
+                height: "100vh",
                 width: "100vw",
                 position: "relative",
                 overflow:"hidden",
-                backgroundColor:"#3b3c36"
-
+                backgroundColor:"#3b3c36",
+          borderLeft:"1px solid #F6f6f6"
                 // zIndex: "1",
               }}> 
               
@@ -241,7 +283,7 @@ displayDashboard =()=>{
               ref={this.mapRef}
               id="map"
               style={{
-                height: "92vh",
+                height: "100%",
                 width: "100%",
                 zIndex: "1",
               }}

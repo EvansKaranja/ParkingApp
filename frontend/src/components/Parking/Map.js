@@ -104,7 +104,8 @@ class Map extends Component {
       iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
       popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
     });
-    if(this.props.location)L.marker(this.props.location, { icon: userlocation })
+    if(this.props.location){
+        L.marker(this.props.location, { icon: userlocation }).addTo(this.state.map)}
  
 
   }

@@ -2,7 +2,7 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from knox.models import AuthToken
 from .serializers import ParkingInfoSerilizer, ParkingSlotSerilizer, OnstreetParkingSpaces
-from parking.models import OffstreetParkingSpaces
+from parking.models import OffstreetParkingSpaces, OnstreetParkingDetails
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import time
@@ -22,7 +22,14 @@ def endSession():
         # if payment_detail.time_of_parking + payment_detail.duration <=datetime.now(tz =pytz.UTC):
         #     OnstreetParkingSpace.reserved=False
         #     OnstreetParkingSpace.save()  
-      
+def count_list(list_data):
+    list_set = list(set(list_data))
+    list_dict = dict.fromkeys(list_set,0)
+    for ls in list_data:
+        for ld in list_dict:
+            if ld ==ls:
+                list_dict[ld]=list_dict[ld]+1
+    return list_dict    
 
 @api_view(['POST'])
 def parkingSlots(request):
@@ -114,4 +121,76 @@ def send_sms(request):
             "sms":"sms",
             }
         )
-       
+@api_view(['GET'])
+def dashboard_data(requet):
+    parking_details = OnstreetParkingDetails.objects.all()
+    total_amount_per_week=get_amount_per_week(parking_details)
+    total_vehicles_per_week = get_vehicles_per_Week(parking_details)
+    parking_types = []
+    for parking_detail in parking_details:
+        parking_types.append(parking_detail.vehicle_type)
+    parking_type_count = count_list(parking_types)
+    return Response({
+        "parking_type":parking_type_count,
+        "total_amount_per_week":total_amount_per_week,
+        "total_vehicles_per_week":total_vehicles_per_week
+    })
+
+
+def get_amount_per_week(parking_details):
+    day_of_week = ['Monday','Tuesday','Wedsday','Thursday','Friday','Saturday','Sunday']
+    total_amount = {
+        'Monday':0,
+        'Tuesday':0,
+        'Wedsday':0,
+        'Thursday':0,
+        'Friday':0,
+        'Saturday':0,
+        'Sunday':0,
+
+    }
+    for parking_detail in parking_details:
+        if parking_detail.time_of_parking.weekday() ==0:
+            total_amount['Monday'] +=2
+        if parking_detail.time_of_parking.weekday() ==1:
+            total_amount['Tuesday'] +=2
+        if parking_detail.time_of_parking.weekday() ==2:
+            total_amount['Wedsday'] +=2
+        if parking_detail.time_of_parking.weekday() ==3:
+            total_amount['Thursday'] +=2
+        if parking_detail.time_of_parking.weekday() ==4:
+            total_amount['Friday'] +=2
+        if parking_detail.time_of_parking.weekday() ==5:
+            total_amount['Saturday'] +=2
+        if parking_detail.time_of_parking.weekday() ==6:
+            total_amount['Sunday'] +=2
+    return total_amount
+
+def get_vehicles_per_Week(parking_details):
+    day_of_week = ['Monday','Tuesday','Wedsday','Thursday','Friday','Saturday','Sunday']
+    total_vehicles = {
+        'Monday':0,
+        'Tuesday':0,
+        'Wedsday':0,
+        'Thursday':0,
+        'Friday':0,
+        'Saturday':0,
+        'Sunday':0,
+
+    }
+    for parking_detail in parking_details:
+        if parking_detail.time_of_parking.weekday() ==0:
+            total_vehicles['Monday'] +=1
+        if parking_detail.time_of_parking.weekday() ==1:
+            total_vehicles['Tuesday'] +=1
+        if parking_detail.time_of_parking.weekday() ==2:
+            total_vehicles['Wedsday'] +=1
+        if parking_detail.time_of_parking.weekday() ==3:
+            total_vehicles['Thursday'] +=1
+        if parking_detail.time_of_parking.weekday() ==4:
+            total_vehicles['Friday'] +=1
+        if parking_detail.time_of_parking.weekday() ==5:
+            total_vehicles['Saturday'] +=1
+        if parking_detail.time_of_parking.weekday() ==6:
+            total_vehicles['Sunday'] +=1
+    return total_vehicles   
