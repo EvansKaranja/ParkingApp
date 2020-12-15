@@ -10,7 +10,7 @@ class LineChart extends Component {
                datasets:[
                    {
                     label:'Total Vehicles Reserved',
-                    data:[1000,2000,12000,3000,0,0,0,],
+                    data:[15,12,10,0,0,0,0,],
                     backgroundColor:[
                         'rgba(255,99,132,0.6)',
                         'rgba(54,162,235,0.6)',

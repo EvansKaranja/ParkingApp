@@ -23,21 +23,28 @@ export const getUserLocation = (parkingType) => (dispatch) => {
 
 };
 // Geocode location
-export const geocodeUserLocation = (place) => (dispatch,getState) => {
-    // axios
-      //     .get(
-      //       "https://maps.googleapis.com/maps/api/geocode/json?address=NationcenterNairobi&key=AIzaSyDtpMTuOFA4zWAkpioamQKHTsQCwVRnsgI"
-      //     )
-      //   .then((res) => {
-      //       console.log(res.data.results[0])
-      //     })
-      //     .catch(function (error) {
-      //       console.log(error);
-      //     });
-  console.log(place)
+export const geocodeUserLocation = (data) => (dispatch,getState) => {
+    axios
+          .get(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${data.name}Nairobi&key=AIzaSyAwVrZUHAURPi6Drm6M9nnpiiqBvt6E8jc`
+          )
+        .then((res) => {
+            let lat = res.data.results[0].geometry.location.lat
+            let lng = res.data.results[0].geometry.location.lng
+            let parkingType = data.params
+            let payload={location:[lat,lng],parkingType}
+            console.log(payload)
+            dispatch({
+              type: SET_GEOCODED_LOCATION,
+              payload: payload,
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
   const token = getState().user.token;
   const config = {
-    headers: {
+    headers: {  
       "Content-type": "application/json",
     },
   };

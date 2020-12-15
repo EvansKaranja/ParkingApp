@@ -5,7 +5,7 @@ import os
 
 import requests
 from requests.auth import HTTPBasicAuth
-
+from parkingproject import myfile
 business_short_code = "174379"
 phone_number = "254728547196"
 lipa_na_mpesa_passkey = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
@@ -51,7 +51,7 @@ def lipa_na_mpesa(phone, amount, *args):
         "PartyB": business_short_code,
         "PhoneNumber": phone,
         # "CallBackURL": "https://nairobiparkingsystem.herokuapp.com/api/payments/",
-        "CallBackURL": "https://092cd9ccf1c4.ngrok.io/api/payments/",
+        "CallBackURL": f"https://{myfile.url}.ngrok.io/api/payments/",
         "AccountReference": "Nairobi Parking ",
         "TransactionDesc": "Pay parking fee"
     }
@@ -60,6 +60,5 @@ def lipa_na_mpesa(phone, amount, *args):
 
     res = response.text
     return res
-
 
 # lipa_na_mpesa(phone="254115218023", amount="1")

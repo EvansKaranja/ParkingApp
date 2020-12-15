@@ -219,7 +219,7 @@ displayDashboard =()=>{
                     onClick={this.getlocation}
                     className="btn btn-warning btn-block mr-2 mb-2 mt-3 "
                   >
-                   Session Ending
+                   Rerserved Session 
               </button>
               <button
                     type="button"

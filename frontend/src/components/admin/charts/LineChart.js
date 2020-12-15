@@ -12,7 +12,7 @@ class LineChart extends Component {
                 datasets:[
                     {
                         label:'Revenue',
-                        data:[1000,2000,12000,3000,0,0,0,],
+                        data:[10, 8, 2, 0, 0, 0, 0],
                         backgroundColor:[
                             // 'rgba(255,99,132,0.6)',
                             'rgba(54,162,235,0.6)',
@@ -81,23 +81,31 @@ class LineChart extends Component {
       componentDidMount(){
         // this.setState({...this.state,chartData:this.props.totalAmountPerWeek}) 
         console.log(this.props.totalAmountPerWeek)
+
         
         
+        }
+        componentDidUpdate(){
+           
         }
      render() {
          return (
              <div>
+             {this.props.totalAmountPerWeek?
+             <div>
                <Line
-  data={this.state.chartData}
+            data={this.state.chartData}
 //   width={100}
-  height={100}
-  options={this.state.options}
-/>
-             </div>
+         height={100}
+            options={this.state.options}
+            />
+             </div>:<span></span>}</div>
          )
      }
  }
  const mapStateToProps = (state) => ({
+    vehicleTypeCount:state.admin.vehicleTypeCount,
     totalAmountPerWeek:state.admin.totalAmountPerWeek,
+
   });
  export default connect(mapStateToProps,{})(LineChart )

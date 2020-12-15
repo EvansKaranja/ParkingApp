@@ -54,9 +54,7 @@ this.setState({...this.state,chartData:this.props.vehicleTypeCount})
 
 }
      
-//    componentDidUpdate( ){
-       
-//    }
+
     render() {
         return (
             <div>

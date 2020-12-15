@@ -1,4 +1,5 @@
 from .base import *
+from parkingproject import myfile
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '46!-w!e4nd*ik)w#op1b4g0vfwns8(r*no9#s)ph=#i_^-19#e'
 # 'neecjr&vw_=*=*ub7h!cg08un&k!yfix5rmrfo0&fu#82v(_&e'
@@ -7,7 +8,7 @@ SECRET_KEY = '46!-w!e4nd*ik)w#op1b4g0vfwns8(r*no9#s)ph=#i_^-19#e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '092cd9ccf1c4.ngrok.io']
+ALLOWED_HOSTS = ['127.0.0.1', f'{myfile.url}.ngrok.io']
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

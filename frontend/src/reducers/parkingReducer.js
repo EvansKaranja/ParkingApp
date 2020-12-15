@@ -39,6 +39,8 @@ export default function(state = initialState, action) {
       
       return {
         ...state,
+        location:action.payload.location,
+        parkingType:action.payload.parkingType,
       };
  
     case GET_PAYMENT_INFO:

@@ -12,11 +12,12 @@ from sensor.models import Sensor
 from rest_framework.decorators import api_view, permission_classes
 from parking.sms import sms
 from users.models import User
+from django.contrib.gis.geos import Point
+from django.contrib.gis.db.models.functions import Distance
 
 def endSession():
     onstreet_spaces = OnstreetParkingSpaces.objects.all().filter(reserved=True)
     for OnstreetParkingSpace in onstreet_spaces:
-        print("Evans")
         payment_detail = OnstreetParkingSpace.onstreetpaymentInfo.all().order_by('-id')
         print(len(payment_detail))
         # if payment_detail.time_of_parking + payment_detail.duration <=datetime.now(tz =pytz.UTC):
@@ -35,8 +36,11 @@ def count_list(list_data):
 def parkingSlots(request):
     endSession()
     if request.method == 'POST':
+        longitude = request.data['location'][0]
+        latitude = request.data['location'][1]
+        user_location = Point(longitude, latitude, srid=4326)
         if request.data['parkingType']['parkingType']=="onstreet":
-            parkingSlots = OnstreetParkingSpaces.objects.all().filter(sensor_status__detected =False).filter(reserved=False).filter(disabled=request.data['parkingType']['disabled'])
+            parkingSlots = OnstreetParkingSpaces.objects.all().filter(sensor_status__detected =False).filter(reserved=False).filter(disabled=request.data['parkingType']['disabled']).annotate(distance=Distance('centroid',user_location)).order_by('distance')[0:6]
             serializer = ParkingSlotSerilizer(parkingSlots, many =True) 
             return Response(serializer.data)
         else:
@@ -57,7 +61,7 @@ class ParkingInfo(APIView):
             if parking.mpesaTransaction:
                 if parking.time_of_parking.date() == datetime.today().date():
                     serializer = ParkingInfoSerilizer(parking)
-                    # sms.send_sms(f"You have succefully reserved {parking.vehicle_registration_number} for {parking.duration}","+"+parking.PhoneNumber)
+                    sms.send_sms(f"You have succefully reserved {parking.vehicle_registration_number} for {parking.duration}","+"+parking.PhoneNumber)
 
                     return Response(serializer.data)
                 else:
@@ -115,7 +119,7 @@ def make_user_staff(request):
 @api_view(['POST'])
 def send_sms(request):
     if request.method == 'POST':
-        # sms.send_sms(request.data["message"],"+"+request.data["number"])
+        sms.send_sms(request.data["message"],"+"+request.data["number"])
         return Response(
          {
             "sms":"sms",

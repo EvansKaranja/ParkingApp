@@ -20,7 +20,7 @@ class OnstreetParkingSpaces(models.Model):
         verbose_name_plural = 'Onstreet Spaces'
 
     def __str__(self):
-        return f"{self.owner}"
+        return f"{self.owner} {self.id}"
 
 class OffstreetParkingSpaces(models.Model):
     # parking_space_id = models.AutoField(primary_key=True)
@@ -37,7 +37,7 @@ class OffstreetParkingSpaces(models.Model):
         verbose_name_plural = 'Offstreet Spaces'
 
     def __str__(self):
-        return f"{self.owner}"
+        return f"{self.owner} {self.id}"
 
 class OnstreetParkingDetails(models.Model):
     user = models.ForeignKey(

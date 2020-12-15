@@ -74,7 +74,7 @@ class Map extends Component {
     const tileLayer = L.tileLayer(
       'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 18,
+    maxZoom: 20,
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
@@ -101,7 +101,7 @@ class Map extends Component {
     var userlocation = L.icon({
       iconUrl: "/static/frontend/images/user-location.png",
       iconSize: [50, 60], // size of the icon
-      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+      iconAnchor: [0 ,0], // point of the icon which will correspond to marker's location
       popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
     });
     if(this.props.location){
@@ -138,8 +138,8 @@ class Map extends Component {
       iconUrl: "/static/frontend/images/parking2.png",
 color:"red",
       iconSize: [40, 60], // size of the icon
-      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+      // iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+      // popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
     });
  
     return L.marker(latlng, { icon: greenIcon });
@@ -168,9 +168,15 @@ handleonChange = (e) => {
   };
 handleOnsubmit = (e) => {
   e.preventDefault();
+  console.log("hey want to geocode")
   let name = this.state.location
+  const data = {
+    params:{parkingType: this.state.selectedOption,
+      disabled: this.state.disabled},
+    name:this.state.location
 
-    this.props.geocodeUserLocation(name)
+  }
+    this.props.geocodeUserLocation(data)
     this.setState({
       location: "",
       display:false
@@ -185,7 +191,6 @@ handleOnsubmit = (e) => {
       disabled: this.state.disabled,
 
     }
-    console.log(data)
     this.props.getUserLocation(data)
 
 this.setState({display: false});
@@ -252,7 +257,7 @@ handleOptionChange=(e)=>{
                     onClick={this.getlocation}
                     className="btn btn-success btn-block mr-2 mb-2 mt-2"
                   >
-                    Reserve within your vicinity
+                    Reserve within my vicinity
               </button>
             <div style={{textAlign:"center", color:"yellow", fontSize:"20px"}}><label>OR</label></div>
                   <label>
@@ -270,6 +275,8 @@ handleOptionChange=(e)=>{
                         onChange={this.handleonChange}
                         required
                         autoComplete="off"
+                    disabled={this.props.parkingSpaces}
+
                       />
                       <button type="submit" disabled={this.props.parkingSpaces} className="btn btn-success rounded-0" style={{ width: "100px" }} >Search</button>
                       

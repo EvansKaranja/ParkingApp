@@ -74,7 +74,7 @@ export const adminstration = (data) => (dispatch,getState) => {
           payload: data,
         });}
         if(res.data["total_amount_per_week"]){
-       let data = FormatAmountData(res.data["total_amount_per_week"])
+        let data = FormatAmountData(res.data["total_amount_per_week"])
           dispatch({
             type: TOTAL_AMOUNT_PER_WEEK,
             payload: data,
@@ -140,6 +140,7 @@ const FormatAmountData =(vehicleType)=>{
       data.push(vehicleType[j])
   }
  
+ console.log(data)
   let chartData = {
     labels:labels,
     datasets:[

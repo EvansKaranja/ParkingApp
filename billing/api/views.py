@@ -12,7 +12,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 @api_view(['GET', 'POST'])
 def make_payments(request):
-    print(request.user)
     if request.method == 'POST':
         ps = OnstreetParkingSpaces.objects.get(id=request.data["parkingspace"])
         psd = OnstreetParkingDetails.objects.create(
@@ -25,10 +24,8 @@ def make_payments(request):
         )
         psd.parkingSpace = ps
         psd.save()
-        # parkingInfo.save()
         lipanampesa.lipa_na_mpesa(
             request.data["mobileNumber"], request.data["amount"])
-        print("finished")
         return Response({"payed": False})
 
     return Response({"message": "Hello, world!"})
@@ -40,7 +37,6 @@ def LNMtransact(request):
     # serializer = MpesaSerializer(mpesaTransactions)
     print(request.user)
     if request.method == 'POST':
-        print(request.data)
         Merchant_request_id = request.data["Body"]["stkCallback"]["MerchantRequestID"]
         Checkout_request_id = request.data["Body"]["stkCallback"]["CheckoutRequestID"]
         Result_code = request.data["Body"]["stkCallback"]["ResultCode"]
@@ -50,10 +46,8 @@ def LNMtransact(request):
             Mpesa_receipt_number = request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
             Transaction_date = str(
                 request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][3]["Value"])
-            print(Transaction_date)
             Transaction_datetime = datetime.strptime(
                 Transaction_date, "%Y%m%d%H%M%S")
-            print(Transaction_datetime)
             Phone_number = request.data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
             parking = OnstreetParkingDetails.objects.filter(PhoneNumber=Phone_number).order_by('-id')[0]
             if parking.mpesaTransaction==None:
