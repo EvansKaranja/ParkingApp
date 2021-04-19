@@ -16,7 +16,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         # 'NAME': os.environ['DB_NAME'],
-        'NAME': 'parking',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'HOST': 'localhost',
         'PASSWORD': 'Snave254',
